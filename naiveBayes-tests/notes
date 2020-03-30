@@ -18,4 +18,4 @@ Propuesta de análisis:
 Predecir con base a las mediciones de glucosa en la sangre durante las comidas si el paciente puede presentar síntomas hipoglucémicos (baja glucosa), a pesar de que hay parámetros generales, los resultados son específicos para cada persona (hipótesis)
 
 Tentativa de tabla:
-pre-breakfast	post-breakfast	pre-lunch	post-lunch	pre-supper	post-supper	pre-snack	hypoglucemic-symptoms
+date pre-breakfast	post-breakfast	pre-lunch	post-lunch	pre-supper	post-supper	pre-snack	hypoglucemic-symptoms
