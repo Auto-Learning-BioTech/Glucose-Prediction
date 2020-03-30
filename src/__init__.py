@@ -14,13 +14,11 @@ def post_datasets():
     for line in lines:
         values = line.split('\t')
         if len(values) == 4: # Simple validation
-            # TODO: Change this Jorge
             new_val = {}
-            values = line.split('\t')
-            new_val['date'] = values[0]
-            new_val['hour'] = values[1]
-            new_val['code'] = values[2]
-            new_val['glucose'] = values[3]
+            values = line.split('\t') 
+            new_val['hour'] = int(values[1].split(':')[0])
+            new_val['code'] = int(values[2])
+            new_val['glucose'] = int(values[3])
             result.append(new_val)
     return json.dumps(result)
 
