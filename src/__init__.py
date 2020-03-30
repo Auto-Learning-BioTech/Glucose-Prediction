@@ -1,29 +1,28 @@
 from flask import Flask, request
 import io
 import csv
+import json
 
 app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Hello World!"
     
-@app.route("/salvador")
-def salvador():
-    return "Hello, Salvador"
-    
-@app.route("/datasets", methods=["POST"])
+@app.route('/datasets', methods=['POST'])
 def post_datasets():
-    f = request.files['data_file']
+    file = request.files['data_file']
+    stream = io.StringIO(file.stream.read().decode('UTF8'))
+    lines = stream.getvalue().split('\n')
+    result = []
+    for line in lines:
+        values = line.split('\t')
+        if len(values) == 4: # Simple validation
+            # TODO: Change this Jorge
+            new_val = {}
+            values = line.split('\t')
+            new_val['date'] = values[0]
+            new_val['hour'] = values[1]
+            new_val['code'] = values[2]
+            new_val['glucose'] = values[3]
+            result.append(new_val)
+    return json.dumps(result)
 
-    stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
-    csv_input = csv.reader(stream)
-    #print("file contents: ", file_contents)
-    #print(type(file_contents))
-    print(csv_input)
-    for row in csv_input:
-        print(row)
-    return ""
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
