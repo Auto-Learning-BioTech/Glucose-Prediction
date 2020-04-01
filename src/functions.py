@@ -51,7 +51,7 @@ def TrainLR(data):
   PolyModel2 = np.poly1d(np.polyfit(x_Post_train, y_Post_train, 5))
 
 
-def PredictLR(hour, ate):
+def PredictLR(hour):
 
   if PolyModel is not None and PolyModel2 is not None:
 
@@ -60,4 +60,3 @@ def PredictLR(hour, ate):
   else:
 
     return 'El modelo no ha sido entrenado'
-

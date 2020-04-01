@@ -37,7 +37,7 @@ def post_datasets():
         return str(error)
     # return Response(json.dumps(result), mimetype='application/json')
 
-# /prediction?hour=<int:0-23>&ate=<?int:0|1>
+# /prediction?hour=<int:0-23>
 # ? indicates that a parameter is optional
 @app.route('/prediction', methods=['GET'])
 def get_prediction():
@@ -46,7 +46,6 @@ def get_prediction():
 
         # Assume the input is correct, 0-23 integer value
         hour = int(request.args.get('hour'))
-        ate = request.args.get('ate')
     
         ate = int(ate)
     
