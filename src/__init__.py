@@ -3,6 +3,8 @@ import io
 import csv
 import json
 
+from . import functions as fn
+
 app = Flask(__name__)
     
 # /datasets
@@ -12,21 +14,28 @@ app = Flask(__name__)
 #   data_file key: String file
 @app.route('/datasets', methods=['POST'])
 def post_datasets():
-    file = request.files['data_file'] # Expecting string only file
-    stream = io.StringIO(file.stream.read().decode('UTF8'))
-    lines = stream.getvalue().split('\n')
-    result = []
-    for line in lines:
-        values = line.split('\t')
-        if len(values) == 4: # Simple validation
-            new_val = {}
-            values = line.split('\t') 
-            new_val['date'] = values[0]
-            new_val['hour'] = int(values[1].split(':')[0])
-            new_val['code'] = int(values[2])
-            new_val['glucose'] = int(values[3])
-            result.append(new_val)
-    return Response(json.dumps(result), mimetype='application/json')
+    try: 
+        file = request.files['data_file']
+        stream = io.StringIO(file.stream.read().decode('UTF8'))
+        lines = stream.getvalue().split('\n')
+        result = []
+        for line in lines:
+            values = line.split('\t')
+            if len(values) == 4: # Simple validation
+                new_val = {}
+                values = line.split('\t') 
+                new_val['hour'] = int(values[1].split(':')[0])
+                new_val['code'] = int(values[2])
+                new_val['glucose'] = int(values[3])
+                result.append(new_val)
+
+        fn.TrainLR(result)
+        return 'ok', 200
+
+    except Exception as error:
+
+        return str(error)
+    # return Response(json.dumps(result), mimetype='application/json')
 
 # /prediction?hour=<int:0-23>&ate=<?int:0|1>
 # ? indicates that a parameter is optional
@@ -45,6 +54,5 @@ def get_prediction():
     # TODO: Handle prediction when ate is True
     return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
 
-
-if __name__ == '__main__':
+if __name__ == '__main__':  
     app.run(debug=True)
