@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 import io
 import csv
 import json
@@ -26,7 +26,7 @@ def post_datasets():
             new_val['code'] = int(values[2])
             new_val['glucose'] = int(values[3])
             result.append(new_val)
-    return json.dumps(result)
+    return Response(json.dumps(result), mimetype='application/json')
 
 # /prediction?hour=<int:0-23>&ate=<?int:0|1>
 # ? indicates that a parameter is optional
@@ -37,13 +37,13 @@ def get_prediction():
     ate = request.args.get('ate')
     if ate is None:
         # TODO: Handle prediction when ate is False
-        return json.dumps({ 'prediction': 'any type you see fit' })
+        return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
     ate = int(ate)
     if ate == 0:
         # TODO: Handle prediction when ate is False
-        return json.dumps({ 'prediction': 'any type you see fit' })
+        return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
     # TODO: Handle prediction when ate is True
-    return json.dumps({ 'prediction': 'any type you see fit' })
+    return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
 
 
 if __name__ == '__main__':
