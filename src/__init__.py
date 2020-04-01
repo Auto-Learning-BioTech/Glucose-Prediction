@@ -41,18 +41,20 @@ def post_datasets():
 # ? indicates that a parameter is optional
 @app.route('/prediction', methods=['GET'])
 def get_prediction():
-    # Assume the input is correct, 0-23 integer value
-    hour = int(request.args.get('hour'))
-    ate = request.args.get('ate')
-    if ate is None:
-        # TODO: Handle prediction when ate is False
-        return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
-    ate = int(ate)
-    if ate == 0:
-        # TODO: Handle prediction when ate is False
-        return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
-    # TODO: Handle prediction when ate is True
-    return Response(json.dumps({ 'prediction': 'any type you see fit' }), mimetype='application/json')
+    
+    try:
+
+        # Assume the input is correct, 0-23 integer value
+        hour = int(request.args.get('hour'))
+        ate = request.args.get('ate')
+    
+        ate = int(ate)
+    
+        return fn.PredictLR(hour, ate)
+
+    except Exception as error:
+
+        return str(error)
 
 if __name__ == '__main__':  
     app.run(debug=True)

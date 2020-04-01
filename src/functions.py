@@ -4,8 +4,8 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
-PolyModel = ""
-PolyModel2 = ""
+PolyModel = None
+PolyModel2 = None
 
 def TrainLR(data):
 
@@ -42,28 +42,22 @@ def TrainLR(data):
 
   ## Antes de comer
 
-  PolyModel = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, 3))
-
-  myline = np.linspace(0, 24, 100)
-
-  print("PRED", PolyModel(18))
-  
-  plt.scatter(x_Pre_train, y_Pre_train)
-  plt.plot(myline, PolyModel(myline))
-
-  # plt.show()
+  global PolyModel 
+  PolyModel = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, 5))
 
   ## Despues de comer
 
+  global PolyModel2
   PolyModel2 = np.poly1d(np.polyfit(x_Post_train, y_Post_train, 5))
 
-  myline2 = np.linspace(0, 24, 100)
 
-  print("PRED", PolyModel2(18))
-  
-  plt.scatter(x_Post_train, y_Post_train)
-  plt.plot(myline2, PolyModel2(myline2))
+def PredictLR(hour, ate):
 
-  plt.show()
+  if PolyModel is not None and PolyModel2 is not None:
 
+    return 'Antes de comer: ' + str(PolyModel(hour)) + '\nDespues de comer: ' +  str(PolyModel2(hour))
+
+  else:
+
+    return 'El modelo no ha sido entrenado'
 
