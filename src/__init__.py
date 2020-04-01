@@ -47,9 +47,8 @@ def get_prediction():
         # Assume the input is correct, 0-23 integer value
         hour = int(request.args.get('hour'))
     
-        ate = int(ate)
     
-        return fn.PredictLR(hour, ate)
+        return fn.PredictLR(hour)
 
     except Exception as error:
 
