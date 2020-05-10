@@ -1,8 +1,6 @@
 import numpy as np
-import pandas as pd
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
-import matplotlib.pyplot as plt
 
 PolyModel = None
 PolyModel2 = None
@@ -42,7 +40,7 @@ def TrainLR(data):
 
   ## Antes de comer
 
-  global PolyModel 
+  global PolyModel
   PolyModel = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, 5))
 
   ## Despues de comer
