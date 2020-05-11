@@ -76,10 +76,9 @@ def get_status():
         status = fn.GetStatus(hour)
 
         if(status == 'notify'):
+            notifyGlucose = messaging.Notification(title='Alerta', body='Checa tu nivel de glucosa')
             message = messaging.Message(
-                data={
-                   'mensaje' : 'Checa tu nivel de glucosa' 
-                },
+                notification=notifyGlucose,
                 token=dToken,
             )
 
