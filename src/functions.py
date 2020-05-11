@@ -53,8 +53,26 @@ def PredictLR(hour):
 
   if PolyModel is not None and PolyModel2 is not None:
 
-    return 'Antes de comer: ' + str(PolyModel(hour)) + '\nDespues de comer: ' +  str(PolyModel2(hour))
+    result = {
+      'antes_de_comer':PolyModel(hour),
+      'despues_de_comer':PolyModel2(hour),
+    }
+
+    return result
+    #return 'Antes de comer: ' + str(PolyModel(hour)) + '\nDespues de comer: ' +  str(PolyModel2(hour))
 
   else:
 
     return 'El modelo no ha sido entrenado'
+
+#Indicates whether to alert or not the user of high glucose levels
+def GetStatus(hour):
+  prediction = PredictLR(hour)
+
+  beforeEating = prediction['antes_de_comer']
+  afterEating = prediction['despues_de_comer']
+
+  if(beforeEating > 200 or afterEating > 200):    
+    return 'notify'
+  else:
+    return 'do not notify'
