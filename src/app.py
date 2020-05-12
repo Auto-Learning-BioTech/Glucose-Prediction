@@ -84,6 +84,24 @@ def post_insert_data():
 #@app.route('/register', methods=['POST'])
 #def register_user
 
+@app.route('/get/graph_data', methods=['GET'])
+def get_graph_data():
+    try:
+
+        # Get csv name
+        csv_name = request.args.get('name')
+        # Get data to graph
+        data = fn.get_data_from_csv(csv_name)
+        response = {
+            'data': data
+        }
+
+        return response, 200
+
+    except Exception as error:
+        return str(error)
+
+
 #Sends a request to FCM to notify the device with the specified token
 @app.route('/status', methods=['GET'])
 def get_status():
