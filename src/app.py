@@ -61,6 +61,25 @@ def get_prediction():
     except Exception as error:
         return str(error)
 
+
+@app.route('/insert', methods=['POST'])
+def post_insert_data():
+    try:
+        hour = int(request.json.get('hour'))
+        glucose = int(request.json.get('glucose'))
+        day = int(request.json.get('day'))
+        month = int(request.json.get('month'))
+        filename = request.json.get('username')
+
+        file = './intermediate_dataset/personal.csv'
+        list = [month, day, hour, glucose]
+
+        fn.append_list_as_row(file, list)
+
+        return 'ok', 200
+    except Exception as error:
+        return str(error)
+
 #Future functionality
 #@app.route('/register', methods=['POST'])
 #def register_user
@@ -88,6 +107,7 @@ def get_status():
         return status
     except:
         return str('error')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
