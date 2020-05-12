@@ -8,7 +8,7 @@
 5. *Alfredo Quintero* - *A01337630*
 ---
 ### Abstract
-This project is for the "Aprendizaje Automatico" class at itesm. It consists of a web application that will allow us to upload csv information on glucose measurements and make predictions on such. 
+This project is for the "Aprendizaje Automatico" class at itesm. It consists of a web application that will allow us to upload csv information on glucose measurements and make predictions on such.
 Una aplicacion web con un modelo para entrenar donde se puede predecir el nivel de glucosa basado en algunos factores como si se ha comido o no, cuanto ejercicio se hace, etc. Consiste de dos endpoints, uno para subir mediciones de metodo POST y otro para obtener predicciones de metodo GET.
 
 ### Introduccion
@@ -36,40 +36,31 @@ Clonar repositorio
 ```
 git clone https://github.com/Auto-Learning-BioTech/Glucose-Prediction.git
 ```
-Cambiar de directorio 
+Cambiar de directorio
 ```
 cd Glucose-Prediction
 ```
-Activar el directorio .env
-```
-source .env/bin/activate
-```
-Iniciar variable de entorno
-```
-export FLASK_APP=src
-```
-Correr la aplicacion flask
-```
-flask run
-```
 ---
 #### Docker
-Clonar repositorio y correr
+Crear un build del Dockerfile
 ```
-docker-compose up
+docker build -t flaskapp .
 ```
-o
+Correr (Port: 5000)
 ```
-docker build .
+docker run -p 5000:5000 flaskapp
+```
+O correr como un background process
+```
+docker run -p 5000:5000 -d flaskapp
 ```
 
 ### Endpoints Documentation
 
-Primero deberemos entrenar el modelo, para esto debemos hacer (nota: utilizar Postman https://www.postman.com/): 
+Primero deberemos entrenar el modelo, para esto debemos hacer (nota: utilizar Postman https://www.postman.com/):
 -petición POST a http://localhost:5000/datasets
 -form data llamado data_file con el csv a entrenar
 
 Para llamar una predicción:
 -Petición GET a http://localhost:5000/prediction?hour=<int:0-23>
 -La variable hour para predecir el nivel de glucosa a cierta hora
-
