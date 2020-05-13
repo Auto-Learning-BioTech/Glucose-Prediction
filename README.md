@@ -23,9 +23,9 @@ Existen medidores de insulina que inyecta automaticamente despues de medir los n
 - Android
 - Firebase
 - API (flask)
-- Mongo DB
+- Base de datos en la nube
 
-Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en mongo cada hora. Mongo le envia a la API datos con los que se mantiene entrenando constantemenete.Si la API recibe un nivel de glucosa mayor a 200, se envia una alerta a Firebasla cual envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
+Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. La base de datos le envía a la API datos con los que se mantiene entrenando constantemenete. Si la API recibe un nivel de glucosa mayor a 200, se envia una alerta a Firebasla cual envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
 
 ### Dataset
 Se utilizaron dos datasets diferentes:
