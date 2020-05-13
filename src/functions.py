@@ -104,7 +104,7 @@ def get_data_from_csv(csv_name):
   a = 1
 
   # Open file in read mode
-  with open('./intermediate_dataset/'+csv_name, 'r') as write_obj:
+  with open('./src/intermediate_dataset/'+csv_name, 'r') as write_obj:
     for line in write_obj:
 
       line = line.split(',')
