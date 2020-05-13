@@ -121,7 +121,7 @@ def get_data_from_csv(csv_name):
       if month == csv_month and csv_day > (day-7) and csv_day <= day:
         a += 1  
 
-        data.append([csv_hour, csv_g])
+        data.append({"hour": csv_hour, "level": csv_g})
   
   return data
 
