@@ -19,7 +19,9 @@ Existen medidores de insulina que inyecta automaticamente despues de medir los n
 México es uno de los paises con mayor número de personas obsesas en el mundo, por lo tanto, cuenta con un indice alto en diabetes. La diabetes al ser una enfermedad delicada, es tambien silenciosa. El objetivo de este proyecto es hacer una aplicación móvil que monitoree los niveles de glucosa de un usuario constantemente. El proposito es que los usuarios obtengan en su aplicación los niveles constantes de glucosa, y reciba una notificación si el usuario tiene sus niveles muy altos indicando una probable enfermedad grave que ponga en peligro su vida. Para obtener datos precisos, se cuenta con una API entrenando de forma constante para saber cuando notificar al usuario, mientras que los datos se mantienen almacenados en una nube. La API notificará a Firebase el nivel alto de glucosa, por lo que la aplicación en Android recibirá una alerta. El alcance final del proyecto es contar con una aplicación completamente funcional que informe al usuario sobre su estado de salud. 
 
 ### Arquitectura
-<img width="461" alt="Screen Shot 2020-05-12 at 20 57 44" src="https://user-images.githubusercontent.com/27737295/81772227-effe6800-94aa-11ea-96e0-d7cef20b455b.png">
+<p align="center">
+  <img width="461" alt="Screen Shot 2020-05-12 at 20 57 44" src="https://user-images.githubusercontent.com/27737295/81772227-effe6800-94aa-11ea-96e0-d7cef20b455b.png">
+</p>
 
 ### Tecnologías
 - Android
