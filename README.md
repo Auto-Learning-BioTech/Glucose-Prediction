@@ -1,11 +1,11 @@
 # Glucose-Prediction
 ---
 #### Members
-1. *Christian Aguilar* - *A01024157*
+1. *Alfredo Quintero* - *A01337630*
 2. *Cesar Valladares* - *A01023506*
 3. *Jorge De la Vega* - *A01650285*
 4. *Saul Enrique Labra* - *A01020725*
-5. *Alfredo Quintero* - *A01337630*
+5. *Christian Aguilar* - *A01024157*
 ---
 ### Abstract
 This project is for the "Aprendizaje Automatico" class at itesm. It consists of a web application that will allow us to upload csv information on glucose measurements and make predictions on such.
@@ -15,6 +15,8 @@ Una aplicacion web con un modelo para entrenar donde se puede predecir el nivel 
 La diabetes es una enfermedad la cual occure cuando la glucosa en la sangre es demasiado alta. La glucosa en la sangre es nuestra principal fuente de energia la cual proviene de lo que comemos. La insulina es una hormona creada por el pancreas que ayuda a que la glucosa se inyecte a las celulas de nuestro cuerpo. Las personas con diabetes utilizan inyecciones de insulina para ayudar a su cuerpo a manejar este proceso.
 Existen medidores de insulina que inyecta automaticamente despues de medir los niveles de glucosa si es necesario. Estos niveles de glucosa se pueden predecir si se tiene la informacion de comidas y ejercicio de forma precisa
 
+### Definición del Proyecto 
+México es uno de los paises con mayor numero de personas obsesas en el mundo, por lo que también tiene un indice alto en diabetes. La diabetes al ser una enfermedad delicada, es tambien silenciosa.El objetivo de este proyecto es hacer una aplicación movil que monitoree los niveles de glucosa de un usuario constantemente. El proposito es que los usuarios obtengan en su aplicación los niveles constantes de su glucosa y reciba una notificación si el usuario tiene sus niveles muy altos indicando una probable enfermedad grave que ponga en peligro su vida. Para obtener datos precisos, se cuenta con una API entrenando de forma constante para saber cuando notificar al usuario, mientras que los datos se encontrarán almacenados en una nube. La API notificará a Firebase el nivel alto de glucosa, por lo que la aplicación en Android recibirá una alerta. 
 
 ### Arquitectura
 <img width="461" alt="Screen Shot 2020-05-12 at 20 57 44" src="https://user-images.githubusercontent.com/27737295/81772227-effe6800-94aa-11ea-96e0-d7cef20b455b.png">
