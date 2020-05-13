@@ -1,19 +1,19 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 import io
 import csv
 import json
 import numpy as np
 import functions as fn
 
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import messaging
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import messaging
 
 app = Flask(__name__)
 
-#Firebase configuration
-cred = credentials.Certificate('glucose-prediction-4b002-firebase-adminsdk-7islk-3ff5c92f60.json')
-firebase_admin.initialize_app(cred)
+# #Firebase configuration
+# cred = credentials.Certificate('glucose-prediction-4b002-firebase-adminsdk-7islk-3ff5c92f60.json')
+# firebase_admin.initialize_app(cred)
 
 #Device token
 #dToken = "fYdcJpr8VJQ:APA91bE05mpSBrP0GN8ycKiAlk8-xK2Y1IbQLgvK8Wt2kJ4nRHEvNWE0h97WiPZQWPnDXN7oDGwn1oOBR_fUIdtYCGeF2nL4qKEoILKYz7rTFOBTIvtrV0WsFJTRI8QpoXHXrla1twCL"
@@ -80,9 +80,9 @@ def post_insert_data():
     except Exception as error:
         return str(error)
 
-#Future functionality
-#@app.route('/register', methods=['POST'])
-#def register_user
+# #Future functionality
+# #@app.route('/register', methods=['POST'])
+# #def register_user
 
 @app.route('/get/graph_data', methods=['GET'])
 def get_graph_data():
@@ -96,35 +96,35 @@ def get_graph_data():
             'data': data
         }
 
-        return response, 200
+        return jsonify(response), 200
 
     except Exception as error:
         return str(error)
 
 
-#Sends a request to FCM to notify the device with the specified token
-@app.route('/status', methods=['GET'])
-def get_status():
-    try:
-        # Assume the input is correct, 0-23 integer value
-        hour = int(request.args.get('hour'))
-        dToken = str(request.args.get('token'))
+# #Sends a request to FCM to notify the device with the specified token
+# @app.route('/status', methods=['GET'])
+# def get_status():
+#     try:
+#         # Assume the input is correct, 0-23 integer value
+#         hour = int(request.args.get('hour'))
+#         dToken = str(request.args.get('token'))
 
-        status = fn.GetStatus(hour)
+#         status = fn.GetStatus(hour)
 
-        if(status == 'notify'):
-            notifyGlucose = messaging.Notification(title='Alerta', body='Checa tu nivel de glucosa')
-            message = messaging.Message(
-                notification=notifyGlucose,
-                token=dToken,
-            )
+#         if(status == 'notify'):
+#             notifyGlucose = messaging.Notification(title='Alerta', body='Checa tu nivel de glucosa')
+#             message = messaging.Message(
+#                 notification=notifyGlucose,
+#                 token=dToken,
+#             )
 
-            response = messaging.send(message)
-            print('Successfully sent message', response)
-        
-        return status
-    except:
-        return str('error')
+#             response = messaging.send(message)
+#             print('Successfully sent message', response)
+
+#         return status
+#     except:
+#         return str('error')
 
 
 if __name__ == '__main__':

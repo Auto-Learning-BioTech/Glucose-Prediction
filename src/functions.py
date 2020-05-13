@@ -85,7 +85,7 @@ def GetStatus(hour):
   beforeEating = prediction['antes_de_comer']
   afterEating = prediction['despues_de_comer']
 
-  if(beforeEating > 200 or afterEating > 200):    
+  if(beforeEating > 200 or afterEating > 200):
     return 'notify'
   else:
     return 'do not notify'
@@ -94,7 +94,7 @@ def GetStatus(hour):
 
 def get_data_from_csv(csv_name):
 
-  # Get date of today 
+  # Get date of today
   today = date.today()
   month = today.month
   day = today.day
@@ -106,7 +106,7 @@ def get_data_from_csv(csv_name):
   # Open file in read mode
   with open('./intermediate_dataset/'+csv_name, 'r') as write_obj:
     for line in write_obj:
-      
+
       line = line.split(',')
 
       # get csv day
@@ -119,9 +119,8 @@ def get_data_from_csv(csv_name):
       csv_g = int(line[3])
 
       if month == csv_month and csv_day > (day-7) and csv_day <= day:
-        a += 1  
+        a += 1
 
         data.append({"hour": csv_hour, "level": csv_g})
-  
-  return data
 
+  return data
