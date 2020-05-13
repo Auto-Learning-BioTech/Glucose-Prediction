@@ -3,6 +3,8 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 
 from csv import writer
+from datetime import date
+
 
 PolyModel = None
 PolyModel2 = None
@@ -87,4 +89,39 @@ def GetStatus(hour):
     return 'notify'
   else:
     return 'do not notify'
+
+
+
+def get_data_from_csv(csv_name):
+
+  # Get date of today 
+  today = date.today()
+  month = today.month
+  day = today.day
+
+  data = []
+
+  a = 1
+
+  # Open file in read mode
+  with open('./intermediate_dataset/'+csv_name, 'r') as write_obj:
+    for line in write_obj:
+      
+      line = line.split(',')
+
+      # get csv day
+      csv_month = int(line[0])
+      # get csv month
+      csv_day = int(line[1])
+      # get csv hour
+      csv_hour = int(line[2])
+      # get csv gloucose
+      csv_g = int(line[3])
+
+      if month == csv_month and csv_day > (day-7) and csv_day <= day:
+        a += 1  
+
+        data.append([csv_hour, csv_g])
+  
+  return data
 
