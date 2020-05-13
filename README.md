@@ -1,13 +1,13 @@
 # Glucose-Prediction
 ---
-#### Members
+#### Miembros
 1. *Alfredo Quintero* - *A01337630*
 2. *Cesar Valladares* - *A01023506*
 3. *Jorge De la Vega* - *A01650285*
 4. *Saul Enrique Labra* - *A01020725*
 5. *Christian Aguilar* - *A01024157*
 ---
-### Abstract
+### Resumen
 Este proyecto fue desarrollado para la clase de "Aprendizaje Automático" impartida en el ITESM. Consiste en un API y una aplicación Android que le permitirá al usuario hacer predicciones de sus niveles de glucosa mediante técnicas de machine learning y tener un registro histórico de estas mediciones.
 
 ### Planteamiento del problema
@@ -75,7 +75,34 @@ O correr como un background process
 docker run -p 5000:5000 -d flaskapp
 ```
 
-### Endpoints Documentation
+### Puntos de entrada
+/
+GET
+Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
+
+/datasets
+POST
+Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
+Parámetros:
+- data_file
+
+/prediction?hour=<int:0-23>
+GET
+Este endpoint recibe como parámetro un entero con rango de 0 a 23 para predecir el nivel de glucosa a cierta hora del día
+Parámetros:
+- hour
+
+/insert
+POST
+Este endpoint recibe como parámetros la fecha y valor de la medición de glucosa a insertar en el csv temporalmente estático, todo se introduce en el cuerpo de la solicitud
+Parámetros:
+- hour:<int: 0-23>
+- glucose:<int>
+- day:<int: 1-31>
+- month:<int: 1-12>
+- filename:<str: 'filename.csv'>
+
+Para hacer predicciones se debe seguir el siguiente proceso
 
 Primero deberemos entrenar el modelo, para esto debemos hacer (nota: utilizar Postman https://www.postman.com/):
 -petición POST a http://localhost:5000/datasets
