@@ -64,3 +64,7 @@ Primero deberemos entrenar el modelo, para esto debemos hacer (nota: utilizar Po
 Para llamar una predicción:
 -Petición GET a http://localhost:5000/prediction?hour=<int:0-23>
 -La variable hour para predecir el nivel de glucosa a cierta hora
+
+### Architecture
+
+<img width="461" alt="Screen Shot 2020-05-12 at 20 57 44" src="https://user-images.githubusercontent.com/27737295/81772227-effe6800-94aa-11ea-96e0-d7cef20b455b.png">
