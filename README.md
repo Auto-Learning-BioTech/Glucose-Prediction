@@ -8,15 +8,21 @@
 5. *Christian Aguilar* - *A01024157*
 ---
 ### Abstract
-This project is for the "Aprendizaje Automatico" class at itesm. It consists of a web application that will allow us to upload csv information on glucose measurements and make predictions on such.
-Una aplicacion web con un modelo para entrenar donde se puede predecir el nivel de glucosa basado en algunos factores como si se ha comido o no, cuanto ejercicio se hace, etc. Consiste de dos endpoints, uno para subir mediciones de metodo POST y otro para obtener predicciones de metodo GET.
+Este proyecto fue desarrollado para la clase de "Aprendizaje Automático" impartida en el ITESM. Consiste en un API y una aplicación Android que le permitirá al usuario hacer predicciones de sus niveles de glucosa mediante técnicas de machine learning y tener un registro histórico de estas mediciones.
 
-### Introduccion
-La diabetes es una enfermedad la cual occure cuando la glucosa en la sangre es demasiado alta. La glucosa en la sangre es nuestra principal fuente de energia la cual proviene de lo que comemos. La insulina es una hormona creada por el pancreas que ayuda a que la glucosa se inyecte a las celulas de nuestro cuerpo. Las personas con diabetes utilizan inyecciones de insulina para ayudar a su cuerpo a manejar este proceso.
-Existen medidores de insulina que inyecta automaticamente despues de medir los niveles de glucosa si es necesario. Estos niveles de glucosa se pueden predecir si se tiene la informacion de comidas y ejercicio de forma precisa
+### Planteamiento del problema
+La diabetes es una enfermedad la cual occure cuando la glucosa en la sangre es demasiado alta. La glucosa en la sangre es nuestra principal fuente de energia la cual proviene de lo que comemos. La insulina es una hormona creada por el pancreas que ayuda a que la glucosa se inyecte a las celulas de nuestro cuerpo. Las personas con diabetes utilizan inyecciones de insulina para ayudar a su cuerpo a manejar este proceso. Si el nivel de glucosa en la sangre es demasiado alta se pueden presentar situaciones de riesgo en las que el paciente pueda perder incluso la vista o gangrena de extremidades por lo que nuestra tarea es ayudar a mitigar este riesgo.
 
-### Definición del Proyecto 
-México es uno de los paises con mayor número de personas obsesas en el mundo, por lo tanto, cuenta con un indice alto en diabetes. La diabetes al ser una enfermedad delicada, es tambien silenciosa. El objetivo de este proyecto es hacer una aplicación móvil que monitoree los niveles de glucosa de un usuario constantemente. El proposito es que los usuarios obtengan en su aplicación los niveles constantes de glucosa, y reciba una notificación si el usuario tiene sus niveles muy altos indicando una probable enfermedad grave que ponga en peligro su vida. Para obtener datos precisos, se cuenta con una API entrenando de forma constante para saber cuando notificar al usuario, mientras que los datos se mantienen almacenados en una nube. La API notificará a Firebase el nivel alto de glucosa, por lo que la aplicación en Android recibirá una alerta. El alcance final del proyecto es contar con una aplicación completamente funcional que informe al usuario sobre su estado de salud. 
+### Objetivo
+El objetivo de este proyecto es ser una ayuda para los pacientes que padecen de diabetes mediante alertas oportunas que les prevengan de una alta subida de nivel de glucosa en la sangre antes de que esto ocurra para que puedan tomar medidas pertinentes antes de que se genere una situación de riesgo mas grave contra su salud. Se generará en este proyecto una solución de software que empleará técnicas de machine learning y de desarrollo de aplicaciones móviles para lograr el objetivo.
+
+### Solución
+Para lograr cumplir con el objetivo del proyecto se optó por desarrollar una aplicación móvil para sistemas Android que recabará datos de los niveles de glucosa de un determinado paciente de manera periódica en intervalos prestablecidos de tiempo. Estos datos provendran de un dispositivo medidor de glucosa automático que el paciente deberá portar todo el tiempo y con la información recabada se entrenará de manera diaria un algoritmo de machine learning que emplea regresiones para predecir en un futuro los niveles de glucosa en la sangre esperados de ese mismo paciente a una determinada hora. El paciente será capaz de ver en la aplicación tanto el histórico de sus mediciones de glucosa a lo largo del tiempo como también contará con una notificación que le será enviada en caso de que la predicción de nivel de glucosa para la próxima hora se salga de los parámetros saludables.
+
+La parte del procesamiento de la información para entrenar los modelos de machine learning se hará dentro de un API y la información que se genere se almacenará en una base de datos alojada en la nube, teniendo registros separados por usuario para predicciones específicas por paciente. Las alertas se generarán por medio del servicio de notificaciones de Firebase Messaging Services usando un token generado por cada dispositivo como identificador.
+
+### Alcance
+El alcance final del proyecto es contar con una aplicación completamente funcional que informe al usuario sobre sus niveles de glucosa a lo largo del tiempo y que reciba las notificaciones oportunas basandose en un modelo entrenado de forma individual por usuario contanto con un perfil al que pueda acceder con un nombre de usuario y una contraseña.
 
 ### Arquitectura
 <p align="center">
@@ -25,19 +31,17 @@ México es uno de los paises con mayor número de personas obsesas en el mundo, 
 
 ### Tecnologías
 - Android
-- Firebase
+- Firebase Cloud Messaging
 - API (flask)
 - Base de datos en la nube
 
-Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. La base de datos le envía a la API datos con los que se mantiene entrenando constantemenete. Si la API recibe un nivel de glucosa mayor a 200, se envia una alerta a Firebasla cual envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
+Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. El API obtiene datos de la base de datos diariamente para mantenerse entrenado. Si la API predice un nivel de glucosa mayor a 200 mg/dl, se envia una alerta al servicio en la nube de Firebase Cloud Messaging que envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
 
 ### Dataset
-Se utilizaron dos datasets diferentes:
-1. Una encuesta de personas que se admitieron a un hospital con problemas de glucosa y diabetes
-2. Una serie de datasets que representan varias acciones que toman pacientes que padecen de diabetes. Los datos incluyen mediciones de glucosa, tiempos de comida, tiempos de ejercicio, etc.
+Se utilizó una serie de datasets que representan varias acciones que toman pacientes que padecen de diabetes. Los datos incluyen mediciones de glucosa, tiempos de comida, tiempos de ejercicio, etc. De aquí se obtiene la información que en un futuro sería obtenida de un medidor automático de glucosa.
 
 ### API
-Se desarrollo una API con Flask debido a su lenguaje de programacion de python del cual utilizamos varias librerias de datos.
+Se desarrollo una API con Flask debido a su lenguaje de programacion de python fácil de usar del cual se usaron las siguientes librerias de datos.
 
 ### Dependencias
 - Flask
