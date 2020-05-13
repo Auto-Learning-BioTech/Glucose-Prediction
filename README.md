@@ -84,20 +84,20 @@ Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API 
 POST
 Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
 Parámetros:
-- data_file
+- data_file:<str:'filename.csv'>
 
 /prediction?hour=<int:0-23>
 GET
 Este endpoint recibe como parámetro un entero con rango de 0 a 23 para predecir el nivel de glucosa a cierta hora del día
 Parámetros:
-- hour
+- hour:<int: 0-23>
 
 /insert
 POST
 Este endpoint recibe como parámetros la fecha y valor de la medición de glucosa a insertar en el csv temporalmente estático, todo se introduce en el cuerpo de la solicitud
 Parámetros:
 - hour:<int: 0-23>
-- glucose:<int>
+- glucose:<int: >
 - day:<int: 1-31>
 - month:<int: 1-12>
 - filename:<str: 'filename.csv'>
