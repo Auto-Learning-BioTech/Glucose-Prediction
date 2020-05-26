@@ -5,18 +5,18 @@ import json
 import numpy as np
 import functions as fn
 
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import messaging
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import messaging
 
 app = Flask(__name__)
 
-# #Firebase configuration
-# cred = credentials.Certificate('glucose-prediction-4b002-firebase-adminsdk-7islk-3ff5c92f60.json')
-# firebase_admin.initialize_app(cred)
+#Firebase configuration
+#cred = credentials.Certificate('glucose-prediction-4b002-firebase-adminsdk-7islk-3ff5c92f60.json')
+#firebase_admin.initialize_app(cred)
 
 #Device token
-#dToken = "fYdcJpr8VJQ:APA91bE05mpSBrP0GN8ycKiAlk8-xK2Y1IbQLgvK8Wt2kJ4nRHEvNWE0h97WiPZQWPnDXN7oDGwn1oOBR_fUIdtYCGeF2nL4qKEoILKYz7rTFOBTIvtrV0WsFJTRI8QpoXHXrla1twCL"
+dToken = "fYdcJpr8VJQ:APA91bE05mpSBrP0GN8ycKiAlk8-xK2Y1IbQLgvK8Wt2kJ4nRHEvNWE0h97WiPZQWPnDXN7oDGwn1oOBR_fUIdtYCGeF2nL4qKEoILKYz7rTFOBTIvtrV0WsFJTRI8QpoXHXrla1twCL"
 
 
 @app.route('/')
@@ -102,7 +102,7 @@ def get_graph_data():
         return str(error)
 
 
-# #Sends a request to FCM to notify the device with the specified token
+#Sends a request to FCM to notify the device with the specified token
 # @app.route('/status', methods=['GET'])
 # def get_status():
 #     try:
