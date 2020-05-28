@@ -1,4 +1,6 @@
 from flask import Flask, request, Response, jsonify
+from werkzeug.utils import secure_filename
+import os
 import io
 import csv
 import json
@@ -9,15 +11,24 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import messaging
 
+
 app = Flask(__name__)
 
-#Firebase configuration
-#cred = credentials.Certificate('glucose-prediction-4b002-firebase-adminsdk-7islk-3ff5c92f60.json')
-#firebase_admin.initialize_app(cred)
+#Configure path to directory to receive files
+UPLOAD_FOLDER = os.path.join(app.instance_path, 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+ALLOWED_EXTENSIONS = {'json'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+cred = None
 
 #Device token
 dToken = "fYdcJpr8VJQ:APA91bE05mpSBrP0GN8ycKiAlk8-xK2Y1IbQLgvK8Wt2kJ4nRHEvNWE0h97WiPZQWPnDXN7oDGwn1oOBR_fUIdtYCGeF2nL4qKEoILKYz7rTFOBTIvtrV0WsFJTRI8QpoXHXrla1twCL"
 
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def hello_world():
@@ -47,6 +58,26 @@ def post_datasets():
 
         fn.TrainLR(result)
         return 'ok', 200
+    except Exception as error:
+        return str(error)
+
+#Function to initialize firebase configuration with JSON credentials
+@app.route('/initializeFirebase', methods=['POST'])
+def initializeFirebase():
+    try:
+        credJsonFile = request.files['credentials']
+        print("got file")
+
+        if credJsonFile and allowed_file(credJsonFile.filename):
+            filename = secure_filename(credJsonFile.filename)
+            print("got filename")
+            credJsonFile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print('saved file')
+
+        cred = credentials.Certificate(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        firebase_admin.initialize_app(cred)
+        print("Initialized with credentials")
+        return("Initialized")
     except Exception as error:
         return str(error)
 
@@ -103,28 +134,28 @@ def get_graph_data():
 
 
 #Sends a request to FCM to notify the device with the specified token
-# @app.route('/status', methods=['GET'])
-# def get_status():
-#     try:
-#         # Assume the input is correct, 0-23 integer value
-#         hour = int(request.args.get('hour'))
-#         dToken = str(request.args.get('token'))
+@app.route('/status', methods=['GET'])
+def get_status():
+    try:
+        # Assume the input is correct, 0-23 integer value
+        hour = int(request.args.get('hour'))
+        dToken = str(request.args.get('token'))
 
-#         status = fn.GetStatus(hour)
+        status = fn.GetStatus(hour)
 
-#         if(status == 'notify'):
-#             notifyGlucose = messaging.Notification(title='Alerta', body='Checa tu nivel de glucosa')
-#             message = messaging.Message(
-#                 notification=notifyGlucose,
-#                 token=dToken,
-#             )
+        if(status == 'notify'):
+            notifyGlucose = messaging.Notification(title='Alerta', body='Checa tu nivel de glucosa')
+            message = messaging.Message(
+                notification=notifyGlucose,
+                token=dToken,
+            )
 
-#             response = messaging.send(message)
-#             print('Successfully sent message', response)
+            response = messaging.send(message)
+            print('Successfully sent message', response)
 
-#         return status
-#     except:
-#         return str('error')
+        return status
+    except:
+        return str('error')
 
 
 if __name__ == '__main__':
