@@ -29,6 +29,31 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
+#joins day, month and year into one string
+def convert_date(year, month, day, hour):
+    new_hour = ""
+    new_day = ""
+    new_month = ""
+    new_date = ""
+    
+    if(len(str(day)) == 1):
+        new_day = "0" + str(day)
+    else:
+        new_day = str(day)
+
+    if(len(str(month)) == 1):
+        new_month = "0" + str(month)
+    else:
+        new_month = str(month)
+
+    if(len(str(hour)) == 1):
+        new_hour = "0" + str(hour)
+    else:
+        new_hour = str(hour)
+
+    new_date = str(year) + new_month + new_day + new_hour
+    return new_date
+
 @app.route('/')
 def hello_world():
     a = np.array([[1, 1]])
@@ -107,7 +132,10 @@ def insert_csv_db():
                 }
 
                 db = firestore.client()
-                doc_ref = db.collection(u'data').document(str(new_meassure['year']) + str(new_meassure['month']) + str(new_meassure['day']) + str(new_meassure['hour']) + new_meassure['username_fk'])
+
+                converted_date = convert_date(str(new_meassure['year']), str(new_meassure['month']), str(new_meassure['day']), str(new_meassure['hour']))
+
+                doc_ref = db.collection(u'data').document(converted_date + new_meassure['username_fk'])
                 doc_ref.set(new_meassure)
 
         return 'ok', 200
@@ -125,8 +153,10 @@ def new_meassurement():
         hour = request.json.get('hour')
         level = request.json.get('level')
 
+        converted_date = convert_date(year, month, day, hour)
+
         db = firestore.client()
-        doc_ref = db.collection(u'data').document(str(year) + str(month) + str(day) + str(hour) + user)
+        doc_ref = db.collection(u'data').document(converted_date + user)
         doc_ref.set(
             {
                 u'year': year,
@@ -158,7 +188,7 @@ def set_user_model():
     except Exception as error:
         return str(error)
 
-#Predict for specific user
+#Predict for specific user, toma username y hora
 # @app.route('/user_predict', methods=['POST'])
 # def user_predict():
 #     try:
@@ -166,7 +196,7 @@ def set_user_model():
 #     except Exception as error:
 #         return str(error)
 
-#Get history
+#Get history, regresa últimos 6 meses
 # @app.route('/get_history', methods=['POST'])
 # def get_history():
 #     try:
