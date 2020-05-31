@@ -1,5 +1,6 @@
 from flask import Flask, request, Response, jsonify
 from werkzeug.utils import secure_filename
+from datetime import date
 import os
 import io
 import csv
@@ -10,6 +11,7 @@ import functions as fn
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import messaging
+from firebase_admin import firestore
 
 
 app = Flask(__name__)
@@ -22,10 +24,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 cred = None
 
-#Device token
-dToken = "fYdcJpr8VJQ:APA91bE05mpSBrP0GN8ycKiAlk8-xK2Y1IbQLgvK8Wt2kJ4nRHEvNWE0h97WiPZQWPnDXN7oDGwn1oOBR_fUIdtYCGeF2nL4qKEoILKYz7rTFOBTIvtrV0WsFJTRI8QpoXHXrla1twCL"
-
-
+#Control file input for specific types of files
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
@@ -39,6 +38,160 @@ def hello_world():
 #   Content-Type: multipart/form-data
 # Required form-data:
 #   data_file key: String file
+
+#Initialize firebase configuration with JSON credentials
+@app.route('/initialize_firebase', methods=['POST'])
+def initializeFirebase():
+    try:
+        credJsonFile = request.files['credentials']
+
+        if credJsonFile and allowed_file(credJsonFile.filename):
+            filename = secure_filename(credJsonFile.filename)
+            credJsonFile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        cred = credentials.Certificate(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        firebase_admin.initialize_app(cred)
+
+        return("Initialized")
+    except Exception as error:
+        return str(error)
+
+#Register new user in DB
+@app.route('/register_user', methods=['POST'])
+def register_user():
+    try:
+        username = request.form['username']
+        device_token = request.form['device_token']
+
+        db = firestore.client()
+        doc_ref = db.collection(u'users').document(username)
+        doc_ref.set({'device_token':device_token})
+
+        return "registered"
+    except Exception as error:
+        return str(error)
+
+#Update user device token
+@app.route('/update_device_token', methods=['POST'])
+def update_device_token():
+    try:
+        username = request.form['username']
+        device_token = request.form['device_token']
+
+        db = firestore.client()
+        doc_ref = db.collection(u'users').document(username)
+        doc_ref.update({u'device_token':device_token})
+
+        return 'updated'
+    except Exception as error:
+        return str(error)
+
+#Insert new user meassures to DB via CSV
+@app.route('/insert_csv_db', methods=['POST'])
+def insert_csv_db():
+    try:
+        user = request.form['username']
+        file = request.files['data_file']
+        stream = io.StringIO(file.stream.read().decode('UTF8'))
+        lines = stream.getvalue().split('\n')
+        for line in lines:
+            values = line.split('\t')
+            if len(values) == 4: # Simple validation
+                new_meassure = {
+                    u'day': int(values[0].split('-')[1]),
+                    u'glucose_level': int(values[3]),
+                    u'hour': int(values[1].split(':')[0]),
+                    u'month': int(values[0].split('-')[0]),
+                    u'username_fk': user,
+                    u'year': int(values[0].split('-')[2]),
+                }
+
+                db = firestore.client()
+                doc_ref = db.collection(u'data').document(str(new_meassure['year']) + str(new_meassure['month']) + str(new_meassure['day']) + str(new_meassure['hour']) + new_meassure['username_fk'])
+                doc_ref.set(new_meassure)
+
+        return 'ok', 200
+    except Exception as error:
+        return str(error)
+
+#Insert new meassures via single value
+@app.route('/new_meassurement', methods=['POST'])
+def new_meassurement():
+    try:
+        user = request.json.get('username')
+        year = request.json.get('year')
+        month = request.json.get('month')
+        day = request.json.get('day')
+        hour = request.json.get('hour')
+        level = request.json.get('level')
+
+        db = firestore.client()
+        doc_ref = db.collection(u'data').document(str(year) + str(month) + str(day) + str(hour) + user)
+        doc_ref.set(
+            {
+                u'year': year,
+                u'month' : month,
+                u'day' : day,
+                u'hour' : hour,
+                u'glucose_level' : level,
+                u'username_fk' : user
+            }
+        )
+
+        return 'ok'
+
+    except Exception as error:
+        return str(error)
+
+#Set user specific exponents in DB used for ML Model
+@app.route('/set_user_model', methods=['POST'])
+def set_user_model():
+    try:
+        exp_arr = request.json.get('exp_arr')
+        username = request.json.get('username')
+
+        db = firestore.client()
+        doc_ref = db.collection(u'users').document(username)
+        doc_ref.update({u'exp_arr':exp_arr})
+
+        return 'exp_arr updated'
+    except Exception as error:
+        return str(error)
+
+#Predict for specific user
+# @app.route('/user_predict', methods=['POST'])
+# def user_predict():
+#     try:
+
+#     except Exception as error:
+#         return str(error)
+
+#Get history
+# @app.route('/get_history', methods=['POST'])
+# def get_history():
+#     try:
+#         username = request.form["username"]
+
+#         today = date.today()
+#         month = today.month
+#         year = today.year
+
+#         db = firestore.client()
+#         docs = db.collections(u'data')
+#         query = docs.where(u'username_fk', u'==', username)
+
+#         docs_dict = []
+
+#         for doc in query:
+#             docs_dict.append(doc.to_dict())
+
+#         return str(docs_dict)
+#     except Exception as error:
+#         return str(error)
+
+
+#############################################Pre-database development#######################################################################
+
 @app.route('/datasets', methods=['POST'])
 def post_datasets():
     try:
@@ -58,26 +211,6 @@ def post_datasets():
 
         fn.TrainLR(result)
         return 'ok', 200
-    except Exception as error:
-        return str(error)
-
-#Function to initialize firebase configuration with JSON credentials
-@app.route('/initializeFirebase', methods=['POST'])
-def initializeFirebase():
-    try:
-        credJsonFile = request.files['credentials']
-        print("got file")
-
-        if credJsonFile and allowed_file(credJsonFile.filename):
-            filename = secure_filename(credJsonFile.filename)
-            print("got filename")
-            credJsonFile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            print('saved file')
-
-        cred = credentials.Certificate(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        firebase_admin.initialize_app(cred)
-        print("Initialized with credentials")
-        return("Initialized")
     except Exception as error:
         return str(error)
 
@@ -110,10 +243,6 @@ def post_insert_data():
         return 'ok', 200
     except Exception as error:
         return str(error)
-
-# #Future functionality
-# #@app.route('/register', methods=['POST'])
-# #def register_user
 
 @app.route('/get/graph_data', methods=['GET'])
 def get_graph_data():
