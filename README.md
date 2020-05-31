@@ -87,22 +87,34 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 
 
 ### Puntos de entrada
-/Registrar Usuario
-Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
-
-/Initialize Firebase | POST:
-Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
-
-/Insert csv data base | :
-Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
-Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
-
-/Set_use_model | :
-Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
-
 /
 GET:
 Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
+
+/initialize_firebase | POST:
+Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
+
+/register_user | POST:
+Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
+
+/update_device_token | POST:
+Este endpoint se encarga de actualizar el device token de cada usuario. Los tokens cambian si la aplicación se reinstala. 
+
+/insert_csv_db | POST:
+Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
+Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
+
+/new_meassurement | POST:
+Este endpoint se encarga de hacer una nueva medición a cada usuario de glucosa. 
+
+/set_user_model | POST:
+Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
+
+/user_predict | POST: 
+Este endpoint obtiene la predicción de un usuario en una hora específica del día. 
+
+/get_history | POST:
+Este endpoint obtiene los datos de un usuario específico de los ultimos seis meses. 
 
 /datasets | POST:
 Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
