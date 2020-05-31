@@ -74,26 +74,43 @@ O correr como un background process
 ```
 docker run -p 5000:5000 -d flaskapp
 ```
+### Base de datos
+Est proyecto utiliza el servicio Cloud Firestore de Firebase. Este servicio es una base de datos no relacional basada en documentos similares a JSON. Se realiza una validación automatica de datos y cuenta con escalabilidad automática. 
+La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza la base para insertar y recuperar datos históricos y la distinción se hace por usuarios individuales. 
+
+- Users: continene dos sub colecciones: Username y array exponentes. El primero, Username, contiene el device token que es el id del dispositivo Android con el que se permite el envio de notificaciones a cada usuario. El segundo es Array exponentes, que se encarga de guardar el modelo por usuario. De esta forma se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
+- Data: este es una combinación entre la llave independiente de cada usuario, el nombre del usuario (username y hora. 
+
 
 ### Puntos de entrada
+/Registrar Usuario
+Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
+
+/Initialize Firebase | POST:
+Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
+
+/Insert csv data base | :
+Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
+Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
+
+/Set_use_model | :
+Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
+
 /
-GET
+GET:
 Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
 
-/datasets
-POST
+/datasets | POST:
 Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
 Parámetros:
 - data_file:<str:'filename.csv'>
 
-/prediction?hour=<int:0-23>
-GET
+/prediction?hour=<int:0-23> | GET:
 Este endpoint recibe como parámetro un entero con rango de 0 a 23 para predecir el nivel de glucosa a cierta hora del día
 Parámetros:
 - hour:<int: 0-23>
 
-/insert
-POST
+/insert | POST:
 Este endpoint recibe como parámetros la fecha y valor de la medición de glucosa a insertar en el csv temporalmente estático, todo se introduce en el cuerpo de la solicitud
 Parámetros:
 - hour:<int: 0-23>
