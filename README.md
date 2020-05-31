@@ -87,41 +87,90 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 
 
 ### Puntos de entrada
-/Registrar Usuario
-Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
+/
+**GET**:
+Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
 
-/Initialize Firebase | POST:
+/**initialize_firebase**| POST:
 Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
 
-/Insert csv data base | :
+  Parámetros: 
+  - "credentials" (archivo .json con las credenciales de Firebase)
+
+/**register_user** | POST:
+Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
+
+Parámetros:
+- "username"(str) 
+- "device_token"(str)
+
+/**update_device_token** | POST:
+Este endpoint se encarga de actualizar el device token de cada usuario. Los tokens cambian si la aplicación se reinstala. 
+
+Parámetros:
+- "username"(str)
+- "device_token"(str)
+
+/**insert_csv_db** | POST:
 Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
 Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
 
-/Set_use_model | :
+Parámetros:
+- "username"(str)
+- "data_file"(.csv file with meassures)
+
+/**new_meassurement** | POST:
+Este endpoint se encarga de hacer una nueva medición a cada usuario de glucosa. 
+
+Parámetros:
+- "username"(str)
+- "year"(int)
+- "month"(int)
+- "day"(int)
+- "hour"(int)
+- "level"(int)
+
+/**set_user_model** | POST:
 Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
 
-/
-GET:
-Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
+Parámetros:
+- "username"(str)
+- "exp_arr"(int array)
 
-/datasets | POST:
+/**user_predict** | POST: 
+Este endpoint obtiene la predicción de un usuario en una hora específica del día. 
+
+Parámetros:
+- "username"(str) 
+- "hour"(int)
+
+/**get_history** | POST:
+Este endpoint obtiene los datos de un usuario específico de los ultimos seis meses. 
+
+Parámetros:
+- "username"(str)
+
+/**datasets** | POST:
 Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
+
 Parámetros:
 - data_file:<str:'filename.csv'>
 
-/prediction?hour=<int:0-23> | GET:
+/**prediction?hour=<int:0-23>** | GET:
 Este endpoint recibe como parámetro un entero con rango de 0 a 23 para predecir el nivel de glucosa a cierta hora del día
+
 Parámetros:
 - hour:<int: 0-23>
 
-/insert | POST:
+/**insert** | POST:
 Este endpoint recibe como parámetros la fecha y valor de la medición de glucosa a insertar en el csv temporalmente estático, todo se introduce en el cuerpo de la solicitud
-Parámetros:
-- hour:<int: 0-23>
-- glucose:<int: >
-- day:<int: 1-31>
-- month:<int: 1-12>
-- filename:<str: 'filename.csv'>
+
+  Parámetros:
+  - hour:<int: 0-23>
+  - glucose:<int: >
+  - day:<int: 1-31>
+  - month:<int: 1-12>
+  - filename:<str: 'filename.csv'>
 
 Para hacer predicciones se debe seguir el siguiente proceso
 
