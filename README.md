@@ -33,7 +33,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 - Android
 - Firebase Cloud Messaging
 - API (flask)
-- Base de datos en la nube
+- Cloud Firestore 
 
 Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. El API obtiene datos de la base de datos diariamente para mantenerse entrenado. Si la API predice un nivel de glucosa mayor a 200 mg/dl, se envia una alerta al servicio en la nube de Firebase Cloud Messaging que envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
 
