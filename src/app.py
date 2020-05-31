@@ -81,7 +81,7 @@ def initializeFirebase():
     except Exception as error:
         return str(error)
 
-#Register new user in DB ##Agregar comprobación de repetidos y asignar cero al arreglo de coeficientes(Saul)
+#Register new user in DB
 @app.route('/register_user', methods=['POST'])
 def register_user():
     try:
@@ -89,10 +89,20 @@ def register_user():
         device_token = request.form['device_token']
 
         db = firestore.client()
-        doc_ref = db.collection(u'users').document(username)
-        doc_ref.set({'device_token':device_token})
 
-        return "registered"
+        doc_ref = db.collection(u'users').document(username)
+        doc = doc_ref.get()
+
+        if(doc.exists):
+            return "user already exists"
+        else:
+            doc_ref = db.collection(u'users').document(username)
+            doc_ref.set({
+                    'device_token':device_token,
+                    'exp_arr' : [0]
+                })
+
+            return "registered"
     except Exception as error:
         return str(error)
 
@@ -189,12 +199,27 @@ def set_user_model():
         return str(error)
 
 #Predict for specific user, toma username y hora, ####mandar arreglo de coeficientes y hora a función de Chris (saúl)
-# @app.route('/user_predict', methods=['POST'])
-# def user_predict():
-#     try:
+@app.route('/user_predict', methods=['POST'])
+def user_predict():
+    try:
+        username = request.form['username']
+        hour = request.form['hour']
 
-#     except Exception as error:
-#         return str(error)
+        db = firestore.client()
+        doc = db.collection(u'users').document(username).get()
+
+        if(doc.exists):
+            doc_dict = doc.to_dict()
+            exp_arr = doc_dict['exp_arr']
+
+            #result = funcion_de_chris_predict(exp_arr, hour)
+
+            return('prediction goes here')
+        else:
+            return('user non existent')
+            
+    except Exception as error:
+        return str(error)
 
 #Get history, regresa últimos 6 meses ####Pendiente Saúl
 # @app.route('/get_history', methods=['POST'])
@@ -218,6 +243,8 @@ def set_user_model():
 #         return str(docs_dict)
 #     except Exception as error:
 #         return str(error)
+
+#status: combinar función de predict con la funcionalidad de mandar notificación
 
 
 #############################################Pre-database development#######################################################################
