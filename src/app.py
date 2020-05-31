@@ -81,7 +81,7 @@ def initializeFirebase():
     except Exception as error:
         return str(error)
 
-#Register new user in DB
+#Register new user in DB ##Agregar comprobación de repetidos y asignar cero al arreglo de coeficientes(Saul)
 @app.route('/register_user', methods=['POST'])
 def register_user():
     try:
@@ -111,7 +111,7 @@ def update_device_token():
     except Exception as error:
         return str(error)
 
-#Insert new user meassures to DB via CSV
+#Insert new user meassures to DB via CSV ###Chris: adaptar para nuevo formato de CSV y adicionar reentrenamiento (usar file con nuevos datos y coeficientes de modelo anterior)
 @app.route('/insert_csv_db', methods=['POST'])
 def insert_csv_db():
     try:
@@ -188,7 +188,7 @@ def set_user_model():
     except Exception as error:
         return str(error)
 
-#Predict for specific user, toma username y hora
+#Predict for specific user, toma username y hora, ####mandar arreglo de coeficientes y hora a función de Chris (saúl)
 # @app.route('/user_predict', methods=['POST'])
 # def user_predict():
 #     try:
@@ -196,7 +196,7 @@ def set_user_model():
 #     except Exception as error:
 #         return str(error)
 
-#Get history, regresa últimos 6 meses
+#Get history, regresa últimos 6 meses ####Pendiente Saúl
 # @app.route('/get_history', methods=['POST'])
 # def get_history():
 #     try:
