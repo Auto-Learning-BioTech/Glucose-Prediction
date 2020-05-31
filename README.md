@@ -78,8 +78,12 @@ docker run -p 5000:5000 -d flaskapp
 Est proyecto utiliza el servicio Cloud Firestore de Firebase. Este servicio es una base de datos no relacional basada en documentos similares a JSON. Se realiza una validación automatica de datos y cuenta con escalabilidad automática. 
 La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza la base para insertar y recuperar datos históricos y la distinción se hace por usuarios individuales. 
 
-- Users: continene dos sub colecciones: Username y array exponentes. El primero, Username, contiene el device token que es el id del dispositivo Android con el que se permite el envio de notificaciones a cada usuario. El segundo es Array exponentes, que se encarga de guardar el modelo por usuario. De esta forma se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
-- Data: este es una combinación entre la llave independiente de cada usuario, el nombre del usuario (username y hora. 
+- Users: continene tres atributos: username, device_token y exp_arr. El primero, username, es el id del dispositivo, se caracteriza por ser el nombre de usuario. El segundo, device_token, es el dispositivo Android que el usuario se encuentre utilizando, de esta forma se permite el envio de notificaciones a cada usuario. Finalmente exp_arr se encarga de guardar el modelo por usuario. De esta manera se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
+- Data: contiene siete atributos: id, year, month, day, hour, username_fk. El id se identifica mediante una combinación entre la llave independiente de cada usuario, el nombre del usuario (username) y la hora. Además contiene el día, nivel de glucosa, hora, mes, nombre del usuario y año. 
+
+<p align="center">
+  <img width="500" alt="Screen Shot 2020-05-30 at 23 12 26" src="https://user-images.githubusercontent.com/27737295/83344380-857f6180-a2cb-11ea-8a5d-baabd1de09ed.png">
+</p>
 
 
 ### Puntos de entrada
