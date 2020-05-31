@@ -33,7 +33,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 - Android
 - Firebase Cloud Messaging
 - API (flask)
-- Base de datos en la nube
+- Cloud Firestore 
 
 Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. El API obtiene datos de la base de datos diariamente para mantenerse entrenado. Si la API predice un nivel de glucosa mayor a 200 mg/dl, se envia una alerta al servicio en la nube de Firebase Cloud Messaging que envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
 
@@ -74,26 +74,47 @@ O correr como un background process
 ```
 docker run -p 5000:5000 -d flaskapp
 ```
+### Base de datos
+Est proyecto utiliza el servicio Cloud Firestore de Firebase. Este servicio es una base de datos no relacional basada en documentos similares a JSON. Se realiza una validación automatica de datos y cuenta con escalabilidad automática. 
+La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza la base para insertar y recuperar datos históricos y la distinción se hace por usuarios individuales. 
+
+- Users: continene tres atributos: username, device_token y exp_arr. El primero, username, es el id del dispositivo, se caracteriza por ser el nombre de usuario. El segundo, device_token, es el dispositivo Android que el usuario se encuentre utilizando, de esta forma se permite el envio de notificaciones a cada usuario. Finalmente exp_arr se encarga de guardar el modelo por usuario. De esta manera se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
+- Data: contiene siete atributos: id, year, month, day, hour, username_fk. El id se identifica mediante una combinación entre la llave independiente de cada usuario, el nombre del usuario (username) y la hora. Además contiene el día, nivel de glucosa, hora, mes, nombre del usuario y año. 
+
+<p align="center">
+  <img width="500" alt="Screen Shot 2020-05-30 at 23 12 26" src="https://user-images.githubusercontent.com/27737295/83344380-857f6180-a2cb-11ea-8a5d-baabd1de09ed.png">
+</p>
+
 
 ### Puntos de entrada
+/Registrar Usuario
+Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
+
+/Initialize Firebase | POST:
+Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
+
+/Insert csv data base | :
+Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
+Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
+
+/Set_use_model | :
+Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
+
 /
-GET
+GET:
 Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
 
-/datasets
-POST
+/datasets | POST:
 Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
 Parámetros:
 - data_file:<str:'filename.csv'>
 
-/prediction?hour=<int:0-23>
-GET
+/prediction?hour=<int:0-23> | GET:
 Este endpoint recibe como parámetro un entero con rango de 0 a 23 para predecir el nivel de glucosa a cierta hora del día
 Parámetros:
 - hour:<int: 0-23>
 
-/insert
-POST
+/insert | POST:
 Este endpoint recibe como parámetros la fecha y valor de la medición de glucosa a insertar en el csv temporalmente estático, todo se introduce en el cuerpo de la solicitud
 Parámetros:
 - hour:<int: 0-23>
