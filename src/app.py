@@ -1,12 +1,16 @@
 from flask import Flask, request, Response, jsonify
 from werkzeug.utils import secure_filename
-from datetime import date
+import datetime
+from datetime import timedelta, datetime
+
 import os
 import io
 import csv
 import json
 import numpy as np
 import functions as fn
+import pytz
+from tzlocal import get_localzone
 
 import firebase_admin
 from firebase_admin import credentials
@@ -174,7 +178,8 @@ def new_meassurement():
                 u'day' : day,
                 u'hour' : hour,
                 u'glucose_level' : level,
-                u'username_fk' : user
+                u'username_fk' : user,
+                u'datetime' : datetime(year, month, day, hour, 0, 0, tzinfo=get_localzone())
             }
         )
 
@@ -221,28 +226,30 @@ def user_predict():
     except Exception as error:
         return str(error)
 
-#Get history, regresa últimos 6 meses ####Pendiente Saúl
-# @app.route('/get_history', methods=['POST'])
-# def get_history():
-#     try:
-#         username = request.form["username"]
+#Get history, regresa registros de los últimos 'n' días
+@app.route('/get_history', methods=['POST'])
+def get_history():
+    try:
+        username = request.form["username"]
+        days = request.form["days"]
 
-#         today = date.today()
-#         month = today.month
-#         year = today.year
+        tzone = get_localzone()
 
-#         db = firestore.client()
-#         docs = db.collections(u'data')
-#         query = docs.where(u'username_fk', u'==', username)
+        now = datetime.now(tz=tzone)
+        delta = timedelta(days=int(days))
+        start_date = now - delta
 
-#         docs_dict = []
+        db = firestore.client()
+        query = db.collection (u'data').where(u'username_fk', u'==', username).where(u'datetime', u'>=', start_date).stream()
 
-#         for doc in query:
-#             docs_dict.append(doc.to_dict())
+        docs_dict = []
 
-#         return str(docs_dict)
-#     except Exception as error:
-#         return str(error)
+        for doc in query:
+            docs_dict.append(doc.to_dict())
+
+        return str(docs_dict)
+    except Exception as error:
+        return str(error)
 
 #status: combinar función de predict con la funcionalidad de mandar notificación
 

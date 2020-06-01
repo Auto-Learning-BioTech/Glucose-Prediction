@@ -9,6 +9,7 @@ RUN pip install --upgrade pip \
     && pip install joblib==0.15.1 \
     && pip install threadpoolctl==2.0.0 \
     && pip install scikit-learn==0.23.1 \
+    && pip install tzlocal==2.1 \
     && rm -rf /root/.cache
 
 WORKDIR /app
