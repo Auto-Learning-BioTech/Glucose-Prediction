@@ -26,7 +26,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 
 ### Arquitectura
 <p align="center">
-  <img width="500" alt="Screen Shot 2020-05-31 at 19 57 32" src="https://user-images.githubusercontent.com/27737295/83367209-   0c3e4800-a379-11ea-967e-ed1b8096a4b8.png">
+  <img width="655" alt="Screen Shot 2020-05-31 at 19 57 32" src="https://user-images.githubusercontent.com/27737295/83367287-6b9c5800-a379-11ea-8d79-ad57a1a21de1.png">
 </p>
 
 ### Tecnologías
@@ -90,7 +90,7 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 **Formato de peticiones:**
 /punto de entrada | Método | Tipo | Valor si elemento fué regresado con éxito.
 
-/**GET** | GET | null | "1": 
+/ | GET | null | "1": 
 Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
 
 /**initialize_firebase**| POST | Form-data | "Initialized":
