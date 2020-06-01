@@ -34,6 +34,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 - Firebase Cloud Messaging
 - API (flask)
 - Cloud Firestore 
+- Google Cloud Platform 
 
 Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. El API obtiene datos de la base de datos diariamente para mantenerse entrenado. Si la API predice un nivel de glucosa mayor a 200 mg/dl, se envia una alerta al servicio en la nube de Firebase Cloud Messaging que envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
 
@@ -85,6 +86,8 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
   <img width="500" alt="Screen Shot 2020-05-30 at 23 12 26" src="https://user-images.githubusercontent.com/27737295/83344380-857f6180-a2cb-11ea-8a5d-baabd1de09ed.png">
 </p>
 
+### Servicio en la nube
+La API de este proyecto se encuentra desplegada en Google Cloud Platform (GCP). La API se encuentra dentro de un contenedor de Docker en forma de imagen con una etiqueta que distingue cada versión de la otra. La imagen del contenedor se encuentra en un registro dentro de GCP para que Google Kubernetes Enginee (GKE) pueda descargar y correr la imagen. Para correr la imagen, se cuenta con un cluster GKE con dos nodos. Para desplegar la aplicación en el cluster GKE, se establece una comunicación con el sistema de administracion de clusters de Kubernetes. Debido a que Kubernetes representa las aplicaciones como Pods, en esta implementación se tiene un Pod que contiene solo el contenedor de nuestra imagen. Finalmente, la aplicación está expuesta en el puerto 5000, pues se crea una IP externa y cuenta con un balanceador de carga, mientras que el contenedor se encuentra en el target port 5000. Es necesario hacer esta división de puertos debido a que los contenedores que corren en GKE no cuentan con direcciones IP externas, por lo tanto no son accesibles a internet. 
 
 ### Puntos de entrada
 **Formato de peticiones:**
