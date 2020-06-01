@@ -26,7 +26,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 
 ### Arquitectura
 <p align="center">
-  <img width="461" alt="Screen Shot 2020-05-12 at 20 57 44" src="https://user-images.githubusercontent.com/27737295/81772227-effe6800-94aa-11ea-96e0-d7cef20b455b.png">
+  <img width="500" alt="Screen Shot 2020-05-31 at 19 57 32" src="https://user-images.githubusercontent.com/27737295/83367209-   0c3e4800-a379-11ea-967e-ed1b8096a4b8.png">
 </p>
 
 ### Tecnologías
@@ -87,31 +87,33 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 
 
 ### Puntos de entrada
-/
-**GET**:
+**Formato de peticiones:**
+/punto de entrada | Método | Tipo | Valor si elemento fué regresado con éxito.
+
+/**GET** | GET | null | "1": 
 Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
 
-/**initialize_firebase**| POST:
+/**initialize_firebase**| POST | Form-data | "Initialized":
 Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
 
   Parámetros: 
   - "credentials" (archivo .json con las credenciales de Firebase)
 
-/**register_user** | POST:
+/**register_user** | POST | Form-data | "registered":
 Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
 
 Parámetros:
 - "username"(str) 
 - "device_token"(str)
 
-/**update_device_token** | POST:
+/**update_device_token** | POST | Form-data | "updated":
 Este endpoint se encarga de actualizar el device token de cada usuario. Los tokens cambian si la aplicación se reinstala. 
 
 Parámetros:
 - "username"(str)
 - "device_token"(str)
 
-/**insert_csv_db** | POST:
+/**insert_csv_db** | POST | Form-data | "ok":
 Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
 Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
 
@@ -119,7 +121,7 @@ Parámetros:
 - "username"(str)
 - "data_file"(.csv file with meassures)
 
-/**new_meassurement** | POST:
+/**new_meassurement** | POST | JSON | "ok":
 Este endpoint se encarga de hacer una nueva medición a cada usuario de glucosa. 
 
 Parámetros:
@@ -130,21 +132,21 @@ Parámetros:
 - "hour"(int)
 - "level"(int)
 
-/**set_user_model** | POST:
+/**set_user_model** | POST | JSON | "exp_arr updated":
 Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
 
 Parámetros:
 - "username"(str)
 - "exp_arr"(int array)
 
-/**user_predict** | POST: 
+/**user_predict** | POST | Form-data | "ok": 
 Este endpoint obtiene la predicción de un usuario en una hora específica del día. 
 
 Parámetros:
 - "username"(str) 
 - "hour"(int)
 
-/**get_history** | POST:
+/**get_history** | POST | Form-data | "retrieved":
 Este endpoint obtiene los datos de un usuario específico de los ultimos seis meses. 
 
 Parámetros:
