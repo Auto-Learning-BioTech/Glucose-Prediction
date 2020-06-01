@@ -89,6 +89,72 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 ### Servicio en la nube
 La API de este proyecto se encuentra desplegada en Google Cloud Platform (GCP). La API se encuentra dentro de un contenedor de Docker en forma de imagen con una etiqueta que distingue cada versión de la otra. La imagen del contenedor se encuentra en un registro dentro de GCP para que Google Kubernetes Enginee (GKE) pueda descargar y correr la imagen. Para correr la imagen, se cuenta con un cluster GKE con dos nodos. Para desplegar la aplicación en el cluster GKE, se establece una comunicación con el sistema de administracion de clusters de Kubernetes. Debido a que Kubernetes representa las aplicaciones como Pods, en esta implementación se tiene un Pod que contiene solo el contenedor de nuestra imagen. Finalmente, la aplicación está expuesta en el puerto 5000, pues se crea una IP externa y cuenta con un balanceador de carga, mientras que el contenedor se encuentra en el target port 5000. Es necesario hacer esta división de puertos debido a que los contenedores que corren en GKE no cuentan con direcciones IP externas, por lo tanto no son accesibles a internet. 
 
+Para desplegar la API se debe tener los siguientes requisitos: un proyecto de GCP creado, tener habilitado Kubernetes Engine API y haber seleccionado el proyecto que se desee utilizar. Además, debe tener instalado el SDK de Google Cloud en su dispositivo y tener Docker instalado en su sistema. Finalmente debe contar con kubectl ya que se utiliza para comunicarse con Kubernetes. 
+```
+gcloud components install kubectl
+```
+Clonar repositorio
+```
+git clone https://github.com/Auto-Learning-BioTech/Glucose-Prediction.git
+```
+Cambiar de directorio
+```
+cd Glucose-Prediction
+```
+Añada la variable de ambiente PROJECT_ID al ID del proyecto de Google Cloud (project-id). La variable PROJECT_ID se utilizará para asociar la imagen del contenedor con el contenedor de registro del proyecto. 
+```
+export PROJECT_ID=project-id
+```
+Construya la imagen del contenedor de esta aplicación y aplique una etiqueta para distinguir, en este caso se usará v1. 
+```
+docker build -t gcr.io/${PROJECT_ID}/flaskapp:v1 .
+```
+Configure la herramienta de linea de comandos de Docker para autenticar el contenedor de registro. Ojo, solo se debe hacer la primera vez que realice este tipo de configuración.
+```
+gcloud auth configure-docker
+```
+Ahora puede cargar la imagen al contenedor de registro:
+```
+docker push gcr.io/${PROJECT_ID}/flaskapp:v1
+```
+Deberá elegir la zona que desee utilizar en su project ID y en Compute Engine. 
+```
+gcloud config set project $PROJECT_ID
+gcloud config set compute/zone us-central1-a 
+```
+Cree un cluter de dos nodos de nombre glucose-cluster.
+```
+gcloud container clusters create glucose-cluster --num-nodes=2
+```
+Suba su aplicación al cluster GKE.
+```
+kubectl create deployment glucose-cluster --image=gcr.io/${PROJECT_ID}/flaskapp:v1
+```
+Finalmente, suba su aplicación a internet.
+```
+kubectl expose deployment glucose-cluster --type=LoadBalancer --port 5000 --target-port 5000
+```
+Escriba el siguiente comando para ver su IP externa y el puerto designado. 
+```
+kubectl get service
+```
+--- 
+**Para subir nuevas versiones del sistema siga los siguientes pasos.**
+
+Construya una nueva imagen de Docker con la etiqueta v2, que simboliza la versión numero dos de su aplicación. 
+```
+docker build -t gcr.io/${PROJECT_ID}/flaskapp:v2 .
+```
+Suba la imagen al contenedor de registro. 
+```
+docker push gcr.io/${PROJECT_ID}/flaskapp:v2  
+```
+Aplique una actualización al despliegue actual con la nueva imagen:
+```
+kubectl set image deployment/glucose-cluster flaskapp=gcr.io/${PROJECT_ID}/flaskapp:v2
+```
+Para mayor información visite Google Cloud Kubernetes Engine Documentation o visite el siguiente link: https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app. 
+
 ### Puntos de entrada
 **Formato de peticiones:**
 /punto de entrada | Método | Tipo | Valor si elemento fué regresado con éxito.
