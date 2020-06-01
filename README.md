@@ -26,7 +26,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 
 ### Arquitectura
 <p align="center">
-  <img width="775" alt="Screen Shot 2020-06-01 at 13 46 54" src="https://user-images.githubusercontent.com/27737295/83442831-7228df00-a40e-11ea-95b2-d71235e6ce8e.png">
+  <img width="769" alt="Screen Shot 2020-06-01 at 13 49 09" src="https://user-images.githubusercontent.com/27737295/83443049-b9af6b00-a40e-11ea-9088-a2c0c5f592d4.png">
 </p>
 
 ### Tecnologías
@@ -82,10 +82,6 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 - Users: continene tres atributos: username, device_token y exp_arr. El primero, username, es el id del dispositivo, se caracteriza por ser el nombre de usuario. El segundo, device_token, es el dispositivo Android que el usuario se encuentre utilizando, de esta forma se permite el envio de notificaciones a cada usuario. Finalmente exp_arr se encarga de guardar el modelo por usuario. De esta manera se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
 - Data: contiene siete atributos: id, year, month, day, hour, username_fk. El id se identifica mediante una combinación entre la llave independiente de cada usuario, el nombre del usuario (username) y la hora. Además contiene el día, nivel de glucosa, hora, mes, nombre del usuario y año. 
 
-<p align="center">
-  <img width="775" alt="Screen Shot 2020-06-01 at 13 46 54" src="https://user-images.githubusercontent.com/27737295/83442799-6210ff80-a40e-11ea-9714-fe1092f09b6c.png">
-
-</p>
 
 ### Servicio en la nube
 <p align="center">
