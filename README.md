@@ -87,6 +87,10 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 </p>
 
 ### Servicio en la nube
+<p align="center">
+  <img width="696" alt="Screen Shot 2020-06-01 at 11 15 56" src="https://user-images.githubusercontent.com/27737295/83429235-5a932b80-a3f9-11ea-9d73-05dea1963098.png">
+</p>
+
 La API de este proyecto se encuentra desplegada en Google Cloud Platform (GCP). La API se encuentra dentro de un contenedor de Docker en forma de imagen con una etiqueta que distingue cada versión de la otra. La imagen del contenedor se encuentra en un registro dentro de GCP para que Google Kubernetes Enginee (GKE) pueda descargar y correr la imagen. Para correr la imagen, se cuenta con un cluster GKE con dos nodos. Para desplegar la aplicación en el cluster GKE, se establece una comunicación con el sistema de administracion de clusters de Kubernetes. Debido a que Kubernetes representa las aplicaciones como Pods, en esta implementación se tiene un Pod que contiene solo el contenedor de nuestra imagen. Finalmente, la aplicación está expuesta en el puerto 5000, pues se crea una IP externa y cuenta con un balanceador de carga, mientras que el contenedor se encuentra en el target port 5000. Es necesario hacer esta división de puertos debido a que los contenedores que corren en GKE no cuentan con direcciones IP externas, por lo tanto no son accesibles a internet. 
 
 Para desplegar la API se debe tener los siguientes requisitos: un proyecto de GCP creado, tener habilitado Kubernetes Engine API y haber seleccionado el proyecto que se desee utilizar. Además, debe tener instalado el SDK de Google Cloud en su dispositivo y tener Docker instalado en su sistema. Finalmente debe contar con kubectl ya que se utiliza para comunicarse con Kubernetes. 
