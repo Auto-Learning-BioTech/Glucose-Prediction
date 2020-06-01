@@ -26,7 +26,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 
 ### Arquitectura
 <p align="center">
-  <img width="655" alt="Screen Shot 2020-05-31 at 19 57 32" src="https://user-images.githubusercontent.com/27737295/83367287-6b9c5800-a379-11ea-8d79-ad57a1a21de1.png">
+  <img width="775" alt="Screen Shot 2020-06-01 at 13 46 54" src="https://user-images.githubusercontent.com/27737295/83442831-7228df00-a40e-11ea-95b2-d71235e6ce8e.png">
 </p>
 
 ### Tecnologías
@@ -83,7 +83,8 @@ La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza
 - Data: contiene siete atributos: id, year, month, day, hour, username_fk. El id se identifica mediante una combinación entre la llave independiente de cada usuario, el nombre del usuario (username) y la hora. Además contiene el día, nivel de glucosa, hora, mes, nombre del usuario y año. 
 
 <p align="center">
-  <img width="500" alt="Screen Shot 2020-05-30 at 23 12 26" src="https://user-images.githubusercontent.com/27737295/83344380-857f6180-a2cb-11ea-8a5d-baabd1de09ed.png">
+  <img width="775" alt="Screen Shot 2020-06-01 at 13 46 54" src="https://user-images.githubusercontent.com/27737295/83442799-6210ff80-a40e-11ea-9714-fe1092f09b6c.png">
+
 </p>
 
 ### Servicio en la nube
