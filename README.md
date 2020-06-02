@@ -26,7 +26,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 
 ### Arquitectura
 <p align="center">
-  <img width="461" alt="Screen Shot 2020-05-12 at 20 57 44" src="https://user-images.githubusercontent.com/27737295/81772227-effe6800-94aa-11ea-96e0-d7cef20b455b.png">
+  <img width="769" alt="Screen Shot 2020-06-01 at 13 49 09" src="https://user-images.githubusercontent.com/27737295/83443049-b9af6b00-a40e-11ea-9088-a2c0c5f592d4.png">
 </p>
 
 ### Tecnologías
@@ -34,6 +34,7 @@ El alcance final del proyecto es contar con una aplicación completamente funcio
 - Firebase Cloud Messaging
 - API (flask)
 - Cloud Firestore 
+- Google Cloud Platform 
 
 Este proyecto utiliza una aplicación en Android la cual envia los registros de glucosa a una API. La API se encarga de guardar un registro en una base de datos en la nube cada hora. El API obtiene datos de la base de datos diariamente para mantenerse entrenado. Si la API predice un nivel de glucosa mayor a 200 mg/dl, se envia una alerta al servicio en la nube de Firebase Cloud Messaging que envia una notificación a la aplicación en Android. La aplicación en el dispositivo mostrará una gráfica con el registro historico de sus datos. 
 
@@ -75,43 +76,118 @@ O correr como un background process
 docker run -p 5000:5000 -d flaskapp
 ```
 ### Base de datos
+<p align="center">
+<img width="500" alt="Screen Shot 2020-06-01 at 20 01 27" src="https://user-images.githubusercontent.com/27737295/83468574-c3eb5c80-a442-11ea-9310-7d00ecd74b90.png">
+</p>
+
 Est proyecto utiliza el servicio Cloud Firestore de Firebase. Este servicio es una base de datos no relacional basada en documentos similares a JSON. Se realiza una validación automatica de datos y cuenta con escalabilidad automática. 
 La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza la base para insertar y recuperar datos históricos y la distinción se hace por usuarios individuales. 
 
 - Users: continene tres atributos: username, device_token y exp_arr. El primero, username, es el id del dispositivo, se caracteriza por ser el nombre de usuario. El segundo, device_token, es el dispositivo Android que el usuario se encuentre utilizando, de esta forma se permite el envio de notificaciones a cada usuario. Finalmente exp_arr se encarga de guardar el modelo por usuario. De esta manera se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
 - Data: contiene siete atributos: id, year, month, day, hour, username_fk. El id se identifica mediante una combinación entre la llave independiente de cada usuario, el nombre del usuario (username) y la hora. Además contiene el día, nivel de glucosa, hora, mes, nombre del usuario y año. 
 
+
+### Servicio en la nube
 <p align="center">
-  <img width="500" alt="Screen Shot 2020-05-30 at 23 12 26" src="https://user-images.githubusercontent.com/27737295/83344380-857f6180-a2cb-11ea-8a5d-baabd1de09ed.png">
+  <img width="670" alt="Screen Shot 2020-06-01 at 22 31 27" src="https://user-images.githubusercontent.com/27737295/83477034-cad09a00-a457-11ea-9b5a-a5b3eb828271.png">
 </p>
 
+La API de este proyecto se encuentra desplegada en Google Cloud Platform (GCP). La API se encuentra dentro de un contenedor de Docker en forma de imagen con una etiqueta que distingue cada versión de la otra. La imagen del contenedor se encuentra en un registro dentro de GCP para que Google Kubernetes Enginee (GKE) pueda descargar y correr la imagen. Para correr la imagen, se cuenta con un cluster GKE con dos nodos. Para desplegar la aplicación en el cluster GKE, se establece una comunicación con el sistema de administracion de clusters de Kubernetes. Debido a que Kubernetes representa las aplicaciones como Pods, en esta implementación se tiene un Pod que contiene solo el contenedor de nuestra imagen. Finalmente, la aplicación está expuesta en el puerto 5000, pues se crea una IP externa y cuenta con un balanceador de carga, mientras que el contenedor se encuentra en el target port 5000. Es necesario hacer esta división de puertos debido a que los contenedores que corren en GKE no cuentan con direcciones IP externas, por lo tanto no son accesibles a internet. 
+
+Para desplegar la API se debe tener los siguientes requisitos: un proyecto de GCP creado, tener habilitado Kubernetes Engine API y haber seleccionado el proyecto que se desee utilizar. Además, debe tener instalado el SDK de Google Cloud en su dispositivo y tener Docker instalado en su sistema. Finalmente debe contar con kubectl ya que se utiliza para comunicarse con Kubernetes. 
+```
+gcloud components install kubectl
+```
+Clonar repositorio
+```
+git clone https://github.com/Auto-Learning-BioTech/Glucose-Prediction.git
+```
+Cambiar de directorio
+```
+cd Glucose-Prediction
+```
+Añada la variable de ambiente PROJECT_ID al ID del proyecto de Google Cloud (project-id). La variable PROJECT_ID se utilizará para asociar la imagen del contenedor con el contenedor de registro del proyecto. 
+```
+export PROJECT_ID=project-id
+```
+Construya la imagen del contenedor de esta aplicación y aplique una etiqueta para distinguir, en este caso se usará v1. 
+```
+docker build -t gcr.io/${PROJECT_ID}/flaskapp:v1 .
+```
+Configure la herramienta de linea de comandos de Docker para autenticar el contenedor de registro. Ojo, solo se debe hacer la primera vez que realice este tipo de configuración.
+```
+gcloud auth configure-docker
+```
+Ahora puede cargar la imagen al contenedor de registro:
+```
+docker push gcr.io/${PROJECT_ID}/flaskapp:v1
+```
+Deberá elegir la zona que desee utilizar en su project ID y en Compute Engine. 
+```
+gcloud config set project $PROJECT_ID
+gcloud config set compute/zone us-central1-a 
+```
+Cree un cluter de dos nodos de nombre glucose-cluster.
+```
+gcloud container clusters create glucose-cluster --num-nodes=2
+```
+Suba su aplicación al cluster GKE.
+```
+kubectl create deployment glucose-cluster --image=gcr.io/${PROJECT_ID}/flaskapp:v1
+```
+Finalmente, suba su aplicación a internet.
+```
+kubectl expose deployment glucose-cluster --type=LoadBalancer --port 5000 --target-port 5000
+```
+Escriba el siguiente comando para ver su IP externa y el puerto designado. 
+```
+kubectl get service
+```
+--- 
+**Para subir nuevas versiones del sistema siga los siguientes pasos.**
+
+Construya una nueva imagen de Docker con la etiqueta v2, que simboliza la versión numero dos de su aplicación. 
+```
+docker build -t gcr.io/${PROJECT_ID}/flaskapp:v2 .
+```
+Suba la imagen al contenedor de registro. 
+```
+docker push gcr.io/${PROJECT_ID}/flaskapp:v2  
+```
+Aplique una actualización al despliegue actual con la nueva imagen:
+```
+kubectl set image deployment/glucose-cluster flaskapp=gcr.io/${PROJECT_ID}/flaskapp:v2
+```
+Para mayor información visite Google Cloud Kubernetes Engine Documentation o visite el siguiente link: https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app. 
 
 ### Puntos de entrada
-/
-**GET**:
+**Formato de peticiones:**
+/punto de entrada | Método | Tipo | Valor si elemento fué regresado con éxito.
+
+/ | GET | null | "1": 
 Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
 
-/**initialize_firebase**| POST:
+/**initialize_firebase**| POST | Form-data | "Initialized":
 Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
 
   Parámetros: 
   - "credentials" (archivo .json con las credenciales de Firebase)
 
-/**register_user** | POST:
+/**register_user** | POST | Form-data | "registered":
 Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
 
 Parámetros:
 - "username"(str) 
 - "device_token"(str)
 
-/**update_device_token** | POST:
+/**update_device_token** | POST | Form-data | "updated":
 Este endpoint se encarga de actualizar el device token de cada usuario. Los tokens cambian si la aplicación se reinstala. 
 
 Parámetros:
 - "username"(str)
 - "device_token"(str)
 
-/**insert_csv_db** | POST:
+/**insert_csv_db** | POST | Form-data | "ok":
 Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
 Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
 
@@ -119,7 +195,7 @@ Parámetros:
 - "username"(str)
 - "data_file"(.csv file with meassures)
 
-/**new_meassurement** | POST:
+/**new_meassurement** | POST | JSON | "ok":
 Este endpoint se encarga de hacer una nueva medición a cada usuario de glucosa. 
 
 Parámetros:
@@ -130,21 +206,21 @@ Parámetros:
 - "hour"(int)
 - "level"(int)
 
-/**set_user_model** | POST:
+/**set_user_model** | POST | JSON | "exp_arr updated":
 Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
 
 Parámetros:
 - "username"(str)
 - "exp_arr"(int array)
 
-/**user_predict** | POST: 
+/**user_predict** | POST | Form-data | "ok": 
 Este endpoint obtiene la predicción de un usuario en una hora específica del día. 
 
 Parámetros:
 - "username"(str) 
 - "hour"(int)
 
-/**get_history** | POST:
+/**get_history** | POST | Form-data | "retrieved":
 Este endpoint obtiene los datos de un usuario específico de los ultimos seis meses. 
 
 Parámetros:

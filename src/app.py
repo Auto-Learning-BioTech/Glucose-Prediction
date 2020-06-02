@@ -1,12 +1,16 @@
 from flask import Flask, request, Response, jsonify
 from werkzeug.utils import secure_filename
-from datetime import date
+import datetime
+from datetime import timedelta, datetime
+
 import os
 import io
 import csv
 import json
 import numpy as np
 import functions as fn
+import pytz
+from tzlocal import get_localzone
 
 import firebase_admin
 from firebase_admin import credentials
@@ -81,7 +85,22 @@ def initializeFirebase():
     except Exception as error:
         return str(error)
 
-#Register new user in DB ##Agregar comprobación de repetidos y asignar cero al arreglo de coeficientes(Saul)
+@app.route('/login_check', methods=['POST'])
+def login_check():
+    try:
+        username = request.form['username']
+
+        db = firestore.client()
+        doc = db.collection('users').document(username).get()
+
+        if(doc.exists):
+            return 'existent'
+        else:
+            return 'non existent'
+    except Exception as error:
+        return str(error)
+
+#Register new user in DB
 @app.route('/register_user', methods=['POST'])
 def register_user():
     try:
@@ -89,10 +108,20 @@ def register_user():
         device_token = request.form['device_token']
 
         db = firestore.client()
-        doc_ref = db.collection(u'users').document(username)
-        doc_ref.set({'device_token':device_token})
 
-        return "registered"
+        doc_ref = db.collection(u'users').document(username)
+        doc = doc_ref.get()
+
+        if(doc.exists):
+            return "user already exists"
+        else:
+            doc_ref = db.collection(u'users').document(username)
+            doc_ref.set({
+                    'device_token':device_token,
+                    'exp_arr' : [0]
+                })
+
+            return "registered"
     except Exception as error:
         return str(error)
 
@@ -194,7 +223,8 @@ def new_meassurement():
                 u'day' : day,
                 u'hour' : hour,
                 u'glucose_level' : level,
-                u'username_fk' : user
+                u'username_fk' : user,
+                u'datetime' : datetime(year, month, day, hour, 0, 0, tzinfo=get_localzone())
             }
         )
 
@@ -219,35 +249,56 @@ def set_user_model():
         return str(error)
 
 #Predict for specific user, toma username y hora, ####mandar arreglo de coeficientes y hora a función de Chris (saúl)
-# @app.route('/user_predict', methods=['POST'])
-# def user_predict():
-#     try:
+@app.route('/user_predict', methods=['POST'])
+def user_predict():
+    try:
+        username = request.form['username']
+        hour = request.form['hour']
 
-#     except Exception as error:
-#         return str(error)
+        db = firestore.client()
+        doc = db.collection(u'users').document(username).get()
 
-#Get history, regresa últimos 6 meses ####Pendiente Saúl
-# @app.route('/get_history', methods=['POST'])
-# def get_history():
-#     try:
-#         username = request.form["username"]
+        if(doc.exists):
+            doc_dict = doc.to_dict()
+            exp_arr = doc_dict['exp_arr']
 
-#         today = date.today()
-#         month = today.month
-#         year = today.year
+            #result = funcion_de_chris_predict(exp_arr, hour)
 
-#         db = firestore.client()
-#         docs = db.collections(u'data')
-#         query = docs.where(u'username_fk', u'==', username)
+            return('prediction goes here')
+        else:
+            return('user non existent')
+            
+    except Exception as error:
+        return str(error)
 
-#         docs_dict = []
+#Get history, regresa registros de los últimos 'n' días
+@app.route('/get_history', methods=['POST'])
+def get_history():
+    try:
+        username = request.form["username"]
+        days = request.form["days"]
 
-#         for doc in query:
-#             docs_dict.append(doc.to_dict())
+        tzone = get_localzone()
 
-#         return str(docs_dict)
-#     except Exception as error:
-#         return str(error)
+        now = datetime.now(tz=tzone)
+        delta = timedelta(days=int(days))
+        start_date = now - delta
+
+        db = firestore.client()
+        query = db.collection (u'data').where(u'username_fk', u'==', username).where(u'datetime', u'>=', start_date).stream()
+
+        docs_dict = []
+
+        for doc in query:
+            docs_dict.append(doc.to_dict())
+
+        json_response = jsonify(docs_dict)
+
+        return json_response
+    except Exception as error:
+        return str(error)
+
+#status: combinar función de predict con la funcionalidad de mandar notificación
 
 
 #############################################Pre-database development#######################################################################
