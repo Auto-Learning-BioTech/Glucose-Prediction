@@ -89,9 +89,8 @@ docker run -p 5000:5000 -d flaskapp
 Est proyecto utiliza el servicio Cloud Firestore de Firebase. Este servicio es una base de datos no relacional basada en documentos similares a JSON. Se realiza una validación automatica de datos y cuenta con escalabilidad automática. 
 La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza la base para insertar y recuperar datos históricos y la distinción se hace por usuarios individuales. 
 
-- Users: continene tres atributos: username, device_token y exp_arr. El primero, username, es el id del dispositivo, se caracteriza por ser el nombre de usuario. El segundo, device_token, es el dispositivo Android que el usuario se encuentre utilizando, de esta forma se permite el envio de notificaciones a cada usuario. Finalmente exp_arr se encarga de guardar el modelo por usuario. De esta manera se sabe que exponentes utilizar en la funcion polinomial que mide la glucosa. 
-- Data: contiene siete atributos: id, year, month, day, hour, username_fk. El id se identifica mediante una combinación entre la llave independiente de cada usuario, el nombre del usuario (username) y la hora. Además contiene el día, nivel de glucosa, hora, mes, nombre del usuario y año. 
-
+- Users: continene tres atributos: username, device_token y exp_arr. El primero, username, es el id del dispositivo, se caracteriza por ser el nombre de usuario. El segundo, device_token, es el dispositivo Android que el usuario se encuentre utilizando, de esta forma se permite el envio de notificaciones a cada usuario. Finalmente exp_arr contiene los coeficientes de la función polinomial que se utiliza para predecir la glucosa.
+- Data: contiene siete atributos: id, year, month, day, hour, username_fk.id de los registros en la colección 'data' se compone del año, mes, día y nombre de usuario concatenados en un strings. Además del id, se tienen los siguientes atributos:  día, nivel de glucosa, hora, mes, nombre del usuario y año. 
 
 ### Servicio en la nube
 <p align="center">
@@ -231,28 +230,6 @@ Este endpoint obtiene los datos de un usuario específico de los ultimos seis me
 
 Parámetros:
 - "username"(str)
-
-/**datasets** | POST:
-Este enpoint recibe como parámetro en el cuerpo de la solicitud el csv que se usará para entrenar el modelo
-
-Parámetros:
-- data_file:<str:'filename.csv'>
-
-/**prediction?hour=<int:0-23>** | GET:
-Este endpoint recibe como parámetro un entero con rango de 0 a 23 para predecir el nivel de glucosa a cierta hora del día
-
-Parámetros:
-- hour:<int: 0-23>
-
-/**insert** | POST:
-Este endpoint recibe como parámetros la fecha y valor de la medición de glucosa a insertar en el csv temporalmente estático, todo se introduce en el cuerpo de la solicitud
-
-  Parámetros:
-  - hour:<int: 0-23>
-  - glucose:<int: >
-  - day:<int: 1-31>
-  - month:<int: 1-12>
-  - filename:<str: 'filename.csv'>
 
 Para hacer predicciones se debe seguir el siguiente proceso
 
