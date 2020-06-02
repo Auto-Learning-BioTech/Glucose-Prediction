@@ -5,6 +5,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 from csv import writer
 from datetime import date
 
+import json
+
 
 PolyModel = None
 PolyModel2 = None
@@ -131,24 +133,48 @@ def TrainPoly(data):
   # y_Post_train = np.array([])
 
   #Declare necesary variables
-  maxpoly = 15
+  maxpoly = 30
   PolyModelsPre = []
   PolyModelsPost = []
   bestModelIndex = -1
   bestscore = 100000000
 
+  dayprev = 0
+  day = 0
+  count = 0
   #Feed Data into arrays
   for row in data:
+    # day = int(row.get('day'))
+    # if dayprev == 0:
+    #   dayprev = int(row.get('day'))
+    #   day = int(row.get('day'))
+    #   x_Pre_train = np.append(int(row.get('hour')), x_Pre_train)
+    #   y_Pre_train = np.append(int(row.get('level')), y_Pre_train)
+    # elif dayprev == day:
+    #   x_Pre_train = np.append(int(row.get('hour')), x_Pre_train)
+    #   y_Pre_train = np.append(int(row.get('level')), y_Pre_train)
+    # elif dayprev < day:
+    #   count += 1
+    #   x_Pre_train = np.append(int(row.get('hour'))+ 24*count, x_Pre_train)
+    #   y_Pre_train = np.append(int(row.get('level')), y_Pre_train)
+    # prevday = day
+
+    x_Pre_train = np.append(int(row.get('hour')), x_Pre_train)
+    y_Pre_train = np.append(int(row.get('level')), y_Pre_train)
 
 
   #Model creation
+  print(x_Pre_train)
+  print(y_Pre_train)
 
-  for i in range(maxpoly)
-    PolyModelsPre[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+
+  for i in range(maxpoly):
+    PolyModelsPre.append( np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i)))
     # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
     score = 0
-    for j in range(x_Pre_train.size)
-      score += PolyModelsPre[i](j) - y_Pre_train[j]
+    for j in range(x_Pre_train.size):
+      score += abs(PolyModelsPre[i](x_Pre_train[j]) - y_Pre_train[j])
+    # print(score)
     if score < bestscore:
       bestscore = score
       bestModelIndex = i
@@ -169,7 +195,48 @@ def RetrainPoly(polyCooefficients, data):
   # y_Post_train = np.array([])
 
   #Declare necesary variables
-  maxpoly = 15
+  maxpoly = 30
+  PolyModelsPre = []
+  PolyModelsPost = []
+  bestModelIndex = -1
+  bestscore = 100000000
+
+  #Feed Data into arrays
+  for i in range(13):
+    x_Pre_train = np.append(i)
+    y_Pre_train = np.append(originalModel(i))
+  for row in data:
+    x_Pre_train = np.append(row.get('hour'), x_Pre_train)
+    y_Pre_train = np.append(row.get('level'), y_Pre_train) 
+
+
+
+  for i in range(maxpoly):
+    PolyModelsPre.append( np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i)))
+    # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+    score = 0
+    for j in range(x_Pre_train.size):
+      score += abs(PolyModelsPre[i](x_Pre_train[j]) - y_Pre_train[j])
+    # print(score)
+    if score < bestscore:
+      bestscore = score
+      bestModelIndex = i
+
+  newPolyCooefficients = PolyModelsPre[bestModelIndex].c
+
+  return newPolyCooefficients
+  newPolyCooefficients = []
+  originalModel = np.poly1d(polyCooefficients)
+
+  #Declare necesary arrays
+  x_Pre_train = np.array([])
+  y_Pre_train = np.array([])
+
+  # x_Post_train = np.array([])
+  # y_Post_train = np.array([])
+
+  #Declare necesary variables
+  maxpoly = 30
   PolyModelsPre = []
   PolyModelsPost = []
   bestModelIndex = -1
@@ -177,13 +244,14 @@ def RetrainPoly(polyCooefficients, data):
 
   #Feed Data into arrays
   for row in data:
+    x_Pre_train = np.append(int(row.get('hour'), x_Pre_train))
+    y_Pre_train = np.append(int(row.get('level'), y_Pre_train))    
 
-
-  for i in range(maxpoly)
-    PolyModelsPre[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+  for i in range(maxpoly):
+    PolyModelsPre[i].append( np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i)))
     # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
     score = 0
-    for j in range(x_Pre_train.size)
+    for j in range(x_Pre_train.size):
       score += PolyModelsPre[i](j) - y_Pre_train[j]
     if score < bestscore:
       bestscore = score
@@ -192,3 +260,34 @@ def RetrainPoly(polyCooefficients, data):
   newPolyCooefficients = PolyModelsPre[bestModelIndex].c
 
   return newPolyCooefficients
+
+def csv_to_jsonNew(data):
+  json_data = {
+    "username":"Chris",
+    "data":[]
+  }
+  for info in data:
+        year = info['year']
+    month = info['month']
+    day = info['day']
+    hour = info['hour']
+    level = info['level']
+    json_data["data"].append({"year":year, "month":month, "day":day, "hour":hour, "level":level})
+
+  return json_data
+
+def csv_to_jsonOld(data):
+  json_data = {
+    "username":"Chris",
+    "data":[]
+  }
+  for info in data:
+    year = info.get('year')
+    month = into.get('month')
+    day = info.get('day')
+    hour = info.get('hour')
+    level = info.get('level')
+    json_data["data"].append({"year":year, "month":month, "day":day, "hour":hour, "level":level})
+
+
+  return json_data
