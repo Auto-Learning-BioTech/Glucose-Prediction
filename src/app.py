@@ -262,7 +262,9 @@ def get_history():
         for doc in query:
             docs_dict.append(doc.to_dict())
 
-        return str(docs_dict)
+        json_response = jsonify(docs_dict)
+
+        return json_response
     except Exception as error:
         return str(error)
 
