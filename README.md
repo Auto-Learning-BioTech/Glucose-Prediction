@@ -44,6 +44,84 @@ Se utilizó una serie de datasets que representan varias acciones que toman paci
 ### API
 Se desarrollo una API con Flask debido a su lenguaje de programacion de python fácil de usar del cual se usaron las siguientes librerias de datos.
 
+
+### Puntos de entrada
+**Formato de peticiones:**
+/punto de entrada | Método | Tipo | Valor si elemento fué regresado con éxito.
+
+/ | GET | null | "1": 
+Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
+
+/**initialize_firebase**| POST | Form-data | "Initialized":
+Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
+
+  Parámetros: 
+  - "credentials" (archivo .json con las credenciales de Firebase)
+
+/**register_user** | POST | Form-data | "registered":
+Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
+
+Parámetros:
+- "username"(str) 
+- "device_token"(str)
+
+/**update_device_token** | POST | Form-data | "updated":
+Este endpoint se encarga de actualizar el device token de cada usuario. Los tokens cambian si la aplicación se reinstala. 
+
+Parámetros:
+- "username"(str)
+- "device_token"(str)
+
+/**insert_json_db** | POST | JSON | "ok":
+Este endpoint inserta un conjunto de datos en un json y se sube a la base de datos a la información especifica de cada usuario (username). 
+Este json se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
+
+Parámetros:
+- "username"(str)
+- "data_file"(.json file with meassures)
+
+/**new_meassurement** | POST | JSON | "ok":
+Este endpoint se encarga de hacer una nueva medición a cada usuario de glucosa. 
+
+Parámetros:
+- "username"(str)
+- "year"(int)
+- "month"(int)
+- "day"(int)
+- "hour"(int)
+- "level"(int)
+
+/**set_user_model** | POST | JSON | "exp_arr updated":
+Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
+
+Parámetros:
+- "username"(str)
+- "exp_arr"(int array)
+
+/**user_predict** | POST | Form-data | "ok": 
+Este endpoint obtiene la predicción de un usuario en una hora específica del día. 
+
+Parámetros:
+- "username"(str) 
+- "hour"(int)
+
+/**get_history** | POST | Form-data | "retrieved":
+Este endpoint obtiene los datos de un usuario específico de los ultimos seis meses. 
+
+Parámetros:
+- "username"(str)
+
+Para hacer predicciones se debe seguir el siguiente proceso
+
+Primero deberemos entrenar el modelo, para esto debemos hacer (nota: utilizar Postman https://www.postman.com/):
+-petición POST a http://localhost:5000/datasets
+-form data llamado data_file con el csv a entrenar
+
+Para llamar una predicción:
+-Petición GET a http://localhost:5000/prediction?hour=<int:0-23>
+-La variable hour para predecir el nivel de glucosa a cierta hora
+
+
 ### Dependencias
 - Flask
 - pandas
@@ -168,79 +246,5 @@ kubectl set image deployment/glucose-cluster flaskapp=gcr.io/${PROJECT_ID}/flask
 ```
 Para mayor información visite Google Cloud Kubernetes Engine Documentation o visite el siguiente link: https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app. 
 
-### Puntos de entrada
-**Formato de peticiones:**
-/punto de entrada | Método | Tipo | Valor si elemento fué regresado con éxito.
 
-/ | GET | null | "1": 
-Este endpoint no recibe parámetros y regresa un '1' como muestra de que el API está corriendo
-
-/**initialize_firebase**| POST | Form-data | "Initialized":
-Este endpoint contiene un json con las credenciales para utilizar el servicio de Firebase. 
-
-  Parámetros: 
-  - "credentials" (archivo .json con las credenciales de Firebase)
-
-/**register_user** | POST | Form-data | "registered":
-Este endpoint se encarga de registrar un usuario en la base de datos, su funcionamiento consiste en revisar si el usuario existe en la base de datos, si el usuario no existe se permite el registro del usuario y sus datos terminan en la base de datos.
-
-Parámetros:
-- "username"(str) 
-- "device_token"(str)
-
-/**update_device_token** | POST | Form-data | "updated":
-Este endpoint se encarga de actualizar el device token de cada usuario. Los tokens cambian si la aplicación se reinstala. 
-
-Parámetros:
-- "username"(str)
-- "device_token"(str)
-
-/**insert_csv_db** | POST | Form-data | "ok":
-Este endpoint inserta un conjunto de datos en un CSV y se sube a la base de datos a la información especifica de cada usuario (username). 
-Este csv se enviará a la base de datos al final del día para mantener un control de la información de cada usuario. 
-
-Parámetros:
-- "username"(str)
-- "data_file"(.csv file with meassures)
-
-/**new_meassurement** | POST | JSON | "ok":
-Este endpoint se encarga de hacer una nueva medición a cada usuario de glucosa. 
-
-Parámetros:
-- "username"(str)
-- "year"(int)
-- "month"(int)
-- "day"(int)
-- "hour"(int)
-- "level"(int)
-
-/**set_user_model** | POST | JSON | "exp_arr updated":
-Este endpoint se encarga de actualizar los valores de la función polinomial que medirá la glucosa. 
-
-Parámetros:
-- "username"(str)
-- "exp_arr"(int array)
-
-/**user_predict** | POST | Form-data | "ok": 
-Este endpoint obtiene la predicción de un usuario en una hora específica del día. 
-
-Parámetros:
-- "username"(str) 
-- "hour"(int)
-
-/**get_history** | POST | Form-data | "retrieved":
-Este endpoint obtiene los datos de un usuario específico de los ultimos seis meses. 
-
-Parámetros:
-- "username"(str)
-
-Para hacer predicciones se debe seguir el siguiente proceso
-
-Primero deberemos entrenar el modelo, para esto debemos hacer (nota: utilizar Postman https://www.postman.com/):
--petición POST a http://localhost:5000/datasets
--form data llamado data_file con el csv a entrenar
-
-Para llamar una predicción:
--Petición GET a http://localhost:5000/prediction?hour=<int:0-23>
--La variable hour para predecir el nivel de glucosa a cierta hora
 
