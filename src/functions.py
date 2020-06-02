@@ -160,7 +160,10 @@ def TrainPoly(data):
 
   polyCooefficients = PolyModelsPre[bestModelIndex].c
   
-  return polyCooefficients
+  # return polyCooefficients
+  polyCooefficientsDICT = { i : polyCooefficients[i] for i in range(0, len(polyCooefficients) ) }
+
+  return PolyCooefficientsDICT
 
 def RetrainPoly(polyCooefficients, data):
   newPolyCooefficients = []
@@ -200,7 +203,9 @@ def RetrainPoly(polyCooefficients, data):
 
   newPolyCooefficients = PolyModelsPre[bestModelIndex].c
 
-  return newPolyCooefficients
+  newPolyCooefficientsDICT = { i : newPolyCooefficients[i] for i in range(0, len(newPolyCooefficients) ) }
+
+  return newPolyCooefficientsDICT
 
 def csv_to_jsonNew(data):
   json_data = {
