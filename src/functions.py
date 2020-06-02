@@ -52,7 +52,6 @@ def TrainLR(data):
   global PolyModel2
   PolyModel2 = np.poly1d(np.polyfit(x_Post_train, y_Post_train, 5))
 
-
 def PredictLR(hour):
 
   if PolyModel is not None and PolyModel2 is not None:
@@ -68,7 +67,6 @@ def PredictLR(hour):
   else:
 
     return 'El modelo no ha sido entrenado'
-
 
 def append_list_as_row(file_name, list_of_elem):
     # Open file in append mode
@@ -89,8 +87,6 @@ def GetStatus(hour):
     return 'notify'
   else:
     return 'do not notify'
-
-
 
 def get_data_from_csv(csv_name):
 

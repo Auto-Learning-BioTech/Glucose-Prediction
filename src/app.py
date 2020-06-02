@@ -112,33 +112,63 @@ def update_device_token():
         return str(error)
 
 #Insert new user meassures to DB via CSV ###Chris: adaptar para nuevo formato de CSV y adicionar reentrenamiento (usar file con nuevos datos y coeficientes de modelo anterior)
-@app.route('/insert_csv_db', methods=['POST'])
-def insert_csv_db():
+# @app.route('/insert_csv_db', methods=['POST'])
+# def insert_csv_db():
+#     try:
+#         user = request.form['username']
+#         file = request.files['data_file']
+#         stream = io.StringIO(file.stream.read().decode('UTF8'))
+#         lines = stream.getvalue().split('\n')
+#         for line in lines:
+#             values = line.split('\t')
+#             if len(values) == 4: # Simple validation
+#                 new_meassure = {
+#                     u'day': int(values[0].split('-')[1]),
+#                     u'glucose_level': int(values[3]),
+#                     u'hour': int(values[1].split(':')[0]),
+#                     u'month': int(values[0].split('-')[0]),
+#                     u'username_fk': user,
+#                     u'year': int(values[0].split('-')[2]),
+#                 }
+
+#                 db = firestore.client()
+
+#                 converted_date = convert_date(str(new_meassure['year']), str(new_meassure['month']), str(new_meassure['day']), str(new_meassure['hour']))
+
+#                 doc_ref = db.collection(u'data').document(converted_date + new_meassure['username_fk'])
+#                 doc_ref.set(new_meassure)
+
+#         return 'ok', 200
+#     except Exception as error:
+#         return str(error)
+
+@app.route('/insert_json_db', methods=['POST'])
+def insert_json_db():
     try:
-        user = request.form['username']
-        file = request.files['data_file']
-        stream = io.StringIO(file.stream.read().decode('UTF8'))
-        lines = stream.getvalue().split('\n')
-        for line in lines:
-            values = line.split('\t')
-            if len(values) == 4: # Simple validation
-                new_meassure = {
-                    u'day': int(values[0].split('-')[1]),
-                    u'glucose_level': int(values[3]),
-                    u'hour': int(values[1].split(':')[0]),
-                    u'month': int(values[0].split('-')[0]),
-                    u'username_fk': user,
-                    u'year': int(values[0].split('-')[2]),
+        jsonfile = request.get_json()
+        user = jsonfile.get('username')
+        for obj in jsonfile.get('data'):
+            year = obj.get('year')
+            month = obj.get('month')
+            day = obj.get('day')
+            hour = obj.get('hour')
+            level = obj.get('level')
+
+            db = firestore.client()
+            converted_date = convert_date(year, month, day, hour)
+            doc_ref = db.collection(u'data').document(converted_date + user)
+            doc_ref.set(
+                {
+                    u'year': year,
+                    u'month' : month,
+                    u'day' : day,
+                    u'hour' : hour,
+                    u'glucose_level' : level,
+                    u'username_fk' : user
                 }
+            )
 
-                db = firestore.client()
-
-                converted_date = convert_date(str(new_meassure['year']), str(new_meassure['month']), str(new_meassure['day']), str(new_meassure['hour']))
-
-                doc_ref = db.collection(u'data').document(converted_date + new_meassure['username_fk'])
-                doc_ref.set(new_meassure)
-
-        return 'ok', 200
+        # return 'ok', 200
     except Exception as error:
         return str(error)
 
