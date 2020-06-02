@@ -76,6 +76,10 @@ O correr como un background process
 docker run -p 5000:5000 -d flaskapp
 ```
 ### Base de datos
+<p align="center">
+<img width="500" alt="Screen Shot 2020-06-01 at 20 01 27" src="https://user-images.githubusercontent.com/27737295/83468574-c3eb5c80-a442-11ea-9310-7d00ecd74b90.png">
+</p>
+
 Est proyecto utiliza el servicio Cloud Firestore de Firebase. Este servicio es una base de datos no relacional basada en documentos similares a JSON. Se realiza una validación automatica de datos y cuenta con escalabilidad automática. 
 La base de datos cuenta con dos colecciones: Users y Data. Este proyecto utiliza la base para insertar y recuperar datos históricos y la distinción se hace por usuarios individuales. 
 
