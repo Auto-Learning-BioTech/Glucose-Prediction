@@ -85,6 +85,21 @@ def initializeFirebase():
     except Exception as error:
         return str(error)
 
+@app.route('/login_check', methods=['POST'])
+def login_check():
+    try:
+        username = request.form['username']
+
+        db = firestore.client()
+        doc = db.collection('users').document(username).get()
+
+        if(doc.exists):
+            return 'existent'
+        else:
+            return 'non existent'
+    except Exception as error:
+        return str(error)
+
 #Register new user in DB
 @app.route('/register_user', methods=['POST'])
 def register_user():
