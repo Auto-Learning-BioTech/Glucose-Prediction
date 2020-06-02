@@ -168,7 +168,7 @@ def insert_json_db():
                 }
             )
 
-        # return 'ok', 200
+        return 'ok', 200
     except Exception as error:
         return str(error)
 
