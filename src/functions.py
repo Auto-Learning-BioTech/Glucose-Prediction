@@ -205,7 +205,7 @@ def csv_to_jsonNew(data):
     "data":[]
   }
   for info in data:
-        year = info['year']
+    year = info['year']
     month = info['month']
     day = info['day']
     hour = info['hour']
@@ -230,22 +230,18 @@ def csv_to_jsonOld(data):
 
   return json_data
 
-def Polypredict(polyCooefficients, hour, username):
+def Polypredict(polyCooefficients, hour):
   
   originalModel = np.poly1d(polyCooefficients)
 
-  jsonResult ={
-    "level":"0"
-  } 
-
-
-  if polyCooefficients == 0:
+  if polyCooefficients == 0 or polyCooefficients[0] == 0:
     jsonResult={
       "level":"0"
     } 
     return jsonResult
   else:
+    level = str(originalModel(hour))
     jsonResult={
-      "level":str(originalModel(hour))
+      "level":level
     }
     return jsonResult
