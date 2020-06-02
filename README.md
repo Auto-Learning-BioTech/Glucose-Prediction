@@ -81,6 +81,9 @@ O correr como un background process
 ```
 docker run -p 5000:5000 -d flaskapp
 ```
+
+Solicite las credenciales del proyecto a uno de los miembros del equipo.
+
 ### Base de datos
 <p align="center">
 <img width="500" alt="Screen Shot 2020-06-01 at 20 01 27" src="https://user-images.githubusercontent.com/27737295/83468574-c3eb5c80-a442-11ea-9310-7d00ecd74b90.png">
