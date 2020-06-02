@@ -176,14 +176,24 @@ def insert_json_db():
     try:
         jsonfile = request.get_json()
         user = jsonfile.get('username')
-        for obj in jsonfile.get('data'):
+        data = json.get('data')
+
+        db = firestore.client()
+        doc = db.collection(u'users').document(user).get()
+
+        if(doc.exists):
+            doc_dict = doc.to_dict()
+            exp_arr = doc_dict['exp_arr']
+            exp_arr = fn.RetrainPoly(exp_arr,data)
+            doc_ref.update({u'exp_arr':exp_arr})
+        
+        for obj in data:
             year = obj.get('year')
             month = obj.get('month')
             day = obj.get('day')
             hour = obj.get('hour')
             level = obj.get('level')
 
-            db = firestore.client()
             converted_date = convert_date(year, month, day, hour)
             doc_ref = db.collection(u'data').document(converted_date + user)
             doc_ref.set(
@@ -262,9 +272,10 @@ def user_predict():
             doc_dict = doc.to_dict()
             exp_arr = doc_dict['exp_arr']
 
-            #result = funcion_de_chris_predict(exp_arr, hour)
+            # result = funcion_de_chris_predict(exp_arr, hour)
+            result = fn.Polypredict(exp_arr,hour)
 
-            return('prediction goes here')
+            return jsonify(result)
         else:
             return('user non existent')
             
