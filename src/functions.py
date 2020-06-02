@@ -120,3 +120,75 @@ def get_data_from_csv(csv_name):
         data.append({"hour": csv_hour, "level": csv_g})
 
   return data
+
+def TrainPoly(data):
+  #Declare necesary arrays
+  polyCooefficients = []
+  x_Pre_train = np.array([])
+  y_Pre_train = np.array([])
+
+  # x_Post_train = np.array([])
+  # y_Post_train = np.array([])
+
+  #Declare necesary variables
+  maxpoly = 15
+  PolyModelsPre = []
+  PolyModelsPost = []
+  bestModelIndex = -1
+  bestscore = 100000000
+
+  #Feed Data into arrays
+  for row in data:
+
+
+  #Model creation
+
+  for i in range(maxpoly)
+    PolyModelsPre[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+    # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+    score = 0
+    for j in range(x_Pre_train.size)
+      score += PolyModelsPre[i](j) - y_Pre_train[j]
+    if score < bestscore:
+      bestscore = score
+      bestModelIndex = i
+
+  polyCooefficients = PolyModelsPre[bestModelIndex].c
+  
+  return polyCooefficients
+
+def RetrainPoly(polyCooefficients, data):
+  newPolyCooefficients = []
+  originalModel = np.poly1d(polyCooefficients)
+
+  #Declare necesary arrays
+  x_Pre_train = np.array([])
+  y_Pre_train = np.array([])
+
+  # x_Post_train = np.array([])
+  # y_Post_train = np.array([])
+
+  #Declare necesary variables
+  maxpoly = 15
+  PolyModelsPre = []
+  PolyModelsPost = []
+  bestModelIndex = -1
+  bestscore = 100000000
+
+  #Feed Data into arrays
+  for row in data:
+
+
+  for i in range(maxpoly)
+    PolyModelsPre[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+    # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
+    score = 0
+    for j in range(x_Pre_train.size)
+      score += PolyModelsPre[i](j) - y_Pre_train[j]
+    if score < bestscore:
+      bestscore = score
+      bestModelIndex = i
+
+  newPolyCooefficients = PolyModelsPre[bestModelIndex].c
+
+  return newPolyCooefficients
