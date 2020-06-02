@@ -161,9 +161,9 @@ def TrainPoly(data):
   polyCooefficients = PolyModelsPre[bestModelIndex].c
   
   # return polyCooefficients
-  polyCooefficientsDICT = { i : polyCooefficients[i] for i in range(0, len(polyCooefficients) ) }
+  polyCooefficientsDICT = { str(i) : polyCooefficients[i] for i in range(0, len(polyCooefficients) ) }
 
-  return PolyCooefficientsDICT
+  return polyCooefficientsDICT
 
 def RetrainPoly(polyCooefficients, data):
   newPolyCooefficients = []
@@ -244,7 +244,7 @@ def Polypredict(polyCooefficients, hour):
 
   if polyCooefficients == 0 or polyCooefficients[0] == 0:
     jsonResult={
-      "level":"0"
+      "level":"213"
     } 
     return jsonResult
   else:

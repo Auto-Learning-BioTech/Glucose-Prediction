@@ -153,8 +153,7 @@ def insert_json_db():
         if(doc.exists):
             doc_dict = doc.to_dict()
             exp_arr = doc_dict['exp_arr']
-            #exp_arr = fn.RetrainPoly(exp_arr,data)
-            exp_arr = fn.TrainPoly(data)
+            exp_arr = fn.RetrainPoly(exp_arr,data)
             doc_ref.update({u'exp_arr':exp_arr})
         
         for obj in data:
@@ -173,7 +172,8 @@ def insert_json_db():
                     u'day' : day,
                     u'hour' : hour,
                     u'glucose_level' : level,
-                    u'username_fk' : user
+                    u'username_fk' : user,
+                    u'datetime' : datetime(int(year), int(month), int(day), int(hour), 0, 0, tzinfo=get_localzone())
                 }
             )
 
