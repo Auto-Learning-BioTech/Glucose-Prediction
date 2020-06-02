@@ -48,8 +48,14 @@ Se desarrollo una API con Flask debido a su lenguaje de programacion de python f
 - Flask
 - pandas
 - numpy
-- sklearn
 - matplotlib
+- scipy
+- joblib
+- threadpoolctl
+- tzlocal
+- firebase-admin
+- grpcio
+- scikit-learn
 
 ### Instalacion
 #### Native
