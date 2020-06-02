@@ -152,7 +152,7 @@ def TrainPoly(data):
     # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
     score = 0
     for j in range(x_Pre_train.size):
-      score += abs(PolyModelsPre[i](j) - y_Pre_train[j])
+      score += abs(PolyModelsPre[i](x_Pre_train[j]) - y_Pre_train[j])
     # print(score)
     if score < bestscore:
       bestscore = score
@@ -164,6 +164,9 @@ def TrainPoly(data):
 
 def RetrainPoly(polyCooefficients, data):
   newPolyCooefficients = []
+  if polyCooefficients[0] == 0 or polyCooefficients == 0 or True:
+    return TrainPoly(data)
+
   originalModel = np.poly1d(polyCooefficients)
 
   #Declare necesary arrays
@@ -190,7 +193,7 @@ def RetrainPoly(polyCooefficients, data):
     # PolyModelsPost[i] = np.poly1d(np.polyfit(x_Pre_train, y_Pre_train, i))
     score = 0
     for j in range(x_Pre_train.size):
-      score += PolyModelsPre[i](j) - y_Pre_train[j]
+      score += PolyModelsPre[i](x_Pre_train[j]) - y_Pre_train[j]
     if score < bestscore:
       bestscore = score
       bestModelIndex = i
