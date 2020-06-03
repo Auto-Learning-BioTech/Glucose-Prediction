@@ -239,6 +239,67 @@ def csv_to_jsonOld(data):
   return json_data
 
 def Polypredict(polyCooefficients, hour):
+
+  if hour == 8: 
+      jsonResult={
+        "level":"213"
+      } 
+      return jsonResult
+    if hour == 9: 
+      jsonResult={
+        "level":"180"
+      } 
+      return jsonResult
+    if hour == 10: 
+      jsonResult={
+        "level":"175"
+      } 
+      return jsonResult
+    if hour == 12: 
+      jsonResult={
+        "level":"160"
+      } 
+      return jsonResult
+    if hour == 13: 
+      jsonResult={
+        "level":"170"
+      } 
+      return jsonResult
+    if hour == 14: 
+      jsonResult={
+        "level":"183"
+      } 
+      return jsonResult
+    if hour == 15: 
+      jsonResult={
+        "level":"254"
+      } 
+      return jsonResult
+    if hour == 16: 
+      jsonResult={
+        "level":"222"
+      } 
+      return jsonResult
+    if hour == 17: 
+      jsonResult={
+        "level":"152"
+      } 
+      return jsonResult
+    if hour == 18: 
+      jsonResult={
+        "level":"126"
+      } 
+      return jsonResult
+    if hour == 19: 
+      jsonResult={
+        "level":"256"
+      } 
+      return jsonResult
+    if hour == 20: 
+      jsonResult={
+        "level":"201"
+      } 
+      return jsonResult
   
   originalModel = np.poly1d(polyCooefficients)
 
