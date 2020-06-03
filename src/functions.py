@@ -167,7 +167,7 @@ def TrainPoly(data):
 
 def RetrainPoly(polyCooefficients, data):
   newPolyCooefficients = []
-  if polyCooefficients[0] == 0 or polyCooefficients == 0 or True:
+  if polyCooefficients["0"] == 0 or polyCooefficients == 0 or True:
     return TrainPoly(data)
 
   originalModel = np.poly1d(polyCooefficients)
