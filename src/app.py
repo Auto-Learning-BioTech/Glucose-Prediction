@@ -62,11 +62,6 @@ def convert_date(year, month, day, hour):
 def hello_world():
     a = np.array([[1, 1]])
     return str(a.shape[0])
-# /datasets
-# Required headers:
-#   Content-Type: multipart/form-data
-# Required form-data:
-#   data_file key: String file
 
 #Initialize firebase configuration with JSON credentials
 @app.route('/initialize_firebase', methods=['POST'])
@@ -85,6 +80,7 @@ def initializeFirebase():
     except Exception as error:
         return str(error)
 
+#Checks if the user exists
 @app.route('/login_check', methods=['POST'])
 def login_check():
     try:
@@ -228,7 +224,7 @@ def set_user_model():
     except Exception as error:
         return str(error)
 
-#Predict for specific user, toma username y hora, ####mandar arreglo de coeficientes y hora a función de Chris (saúl)
+#Predict for specific user
 @app.route('/user_predict', methods=['POST'])
 def user_predict():
     try:
@@ -265,7 +261,7 @@ def user_predict():
     except Exception as error:
         return str(error)
 
-#Get history, regresa registros de los últimos 'n' días
+#Get history, gets the records of the last 'n' days
 @app.route('/get_history', methods=['POST'])
 def get_history():
     try:
@@ -291,31 +287,6 @@ def get_history():
         return json_response
     except Exception as error:
         return str(error)
-####################### Pre data base ####################
-#Sends a request to FCM to notify the device with the specified token
-@app.route('/status', methods=['GET'])
-def get_status():
-    try:
-        # Assume the input is correct, 0-23 integer value
-        hour = int(request.args.get('hour'))
-        dToken = str(request.args.get('token'))
-
-        status = fn.GetStatus(hour)
-
-        if(status == 'notify'):
-            notifyGlucose = messaging.Notification(title='Alerta', body='Checa tu nivel de glucosa')
-            message = messaging.Message(
-                notification=notifyGlucose,
-                token=dToken,
-            )
-
-            response = messaging.send(message)
-            print('Successfully sent message', response)
-
-        return status
-    except:
-        return str('error')
-
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
